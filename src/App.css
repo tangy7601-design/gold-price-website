@@ -1,0 +1,1971 @@
+
+/* =====================================================
+   Global
+===================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+
+  font-family:
+    "Microsoft YaHei",
+    "PingFang SC",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
+
+  background: #f5f6f8;
+
+  color: #202733;
+}
+
+button,
+a {
+  font-family: inherit;
+}
+
+a {
+  text-decoration: none;
+}
+
+
+/* =====================================================
+   App
+===================================================== */
+
+.app {
+  min-height: 100vh;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8f9fb 0%,
+      #f3f4f6 100%
+    );
+}
+
+
+/* =====================================================
+   Header
+===================================================== */
+
+.header {
+  width: 100%;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e8eaee;
+}
+
+.header-inner {
+  width: min(
+    1180px,
+    calc(100% - 40px)
+  );
+
+  height: 78px;
+
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+/* Brand */
+
+.brand {
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+}
+
+.brand-logo {
+  width: 43px;
+  height: 43px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #202733;
+
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  letter-spacing: 1px;
+}
+
+.brand-name {
+  color: #202733;
+
+  font-size: 19px;
+  font-weight: 700;
+
+  letter-spacing: 1px;
+}
+
+.brand-subtitle {
+  margin-top: 3px;
+
+  color: #9ba2ac;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  letter-spacing: 1.4px;
+}
+
+
+/* Header status */
+
+.header-status {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  color: #747d88;
+
+  font-size: 12px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+}
+
+.status-online {
+  background: #45a66d;
+
+  box-shadow:
+    0 0 0 4px rgba(69, 166, 109, 0.1);
+}
+
+.status-error {
+  background: #ca6464;
+
+  box-shadow:
+    0 0 0 4px rgba(202, 100, 100, 0.1);
+}
+
+
+/* =====================================================
+   Main
+===================================================== */
+
+.main {
+  width: min(
+    1080px,
+    calc(100% - 40px)
+  );
+
+  margin: 0 auto;
+
+  padding: 58px 0 70px;
+}
+
+
+/* =====================================================
+   Hero
+===================================================== */
+
+.hero {
+  text-align: center;
+
+  margin-bottom: 38px;
+}
+
+.hero-label {
+  display: inline-block;
+
+  margin-bottom: 11px;
+
+  color: #a27d43;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 3px;
+}
+
+.hero h1 {
+  margin: 0;
+
+  color: #202733;
+
+  font-size: 37px;
+  line-height: 1.3;
+
+  font-weight: 700;
+
+  letter-spacing: 2px;
+}
+
+.hero p {
+  margin: 10px 0 0;
+
+  color: #858d98;
+
+  font-size: 13px;
+}
+
+
+/* =====================================================
+   Four Metal Cards
+===================================================== */
+
+.metal-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 16px;
+}
+
+.metal-card {
+  min-height: 210px;
+
+  padding: 23px 22px;
+
+  background: #ffffff;
+
+  border: 1px solid #e6e9ed;
+
+  border-radius: 13px;
+
+  box-shadow:
+    0 7px 24px rgba(
+      30,
+      38,
+      50,
+      0.04
+    );
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.metal-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 28px rgba(
+      30,
+      38,
+      50,
+      0.07
+    );
+}
+
+
+/* Metal card top */
+
+.metal-card-top {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.metal-name {
+  color: #343b46;
+
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.metal-en {
+  margin-top: 4px;
+
+  color: #a0a7b0;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  letter-spacing: 1.3px;
+}
+
+.metal-symbol {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: #f5f6f8;
+
+  color: #8e6d3d;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+/* Metal price */
+
+.metal-price {
+  margin-top: 31px;
+
+  color: #202733;
+
+  font-size: 27px;
+
+  line-height: 1.1;
+
+  font-weight: 700;
+
+  letter-spacing: -0.5px;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+.metal-unit {
+  margin-top: 7px;
+
+  color: #9299a3;
+
+  font-size: 11px;
+}
+
+
+/* Bottom */
+
+.metal-card-bottom {
+  margin-top: 24px;
+
+  padding-top: 12px;
+
+  display: flex;
+  justify-content: space-between;
+
+  border-top: 1px solid #edf0f3;
+
+  color: #a0a7b0;
+
+  font-size: 9px;
+}
+
+.metal-card-bottom span:first-child {
+  color: #8e6d3d;
+
+  font-weight: 700;
+}
+
+
+/* Gold */
+
+.metal-gold {
+  border-top: 3px solid #b28a4b;
+}
+
+/* Silver */
+
+.metal-silver {
+  border-top: 3px solid #9ca3ad;
+}
+
+/* Platinum */
+
+.metal-platinum {
+  border-top: 3px solid #7d8794;
+}
+
+/* Palladium */
+
+.metal-palladium {
+  border-top: 3px solid #606b78;
+}
+
+
+/* =====================================================
+   Common Section
+===================================================== */
+
+.section-block {
+  margin-top: 24px;
+
+  background: #ffffff;
+
+  border: 1px solid #e6e9ed;
+
+  border-radius: 13px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 7px 24px rgba(
+      30,
+      38,
+      50,
+      0.035
+    );
+}
+
+.section-heading {
+  padding: 19px 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #edf0f3;
+}
+
+.section-title {
+  color: #343b46;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.section-subtitle {
+  margin-top: 3px;
+
+  color: #a3a9b1;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  letter-spacing: 1.5px;
+}
+
+.section-note {
+  padding: 5px 9px;
+
+  border-radius: 5px;
+
+  background: #f5f6f8;
+
+  color: #858d97;
+
+  font-size: 10px;
+}
+
+
+/* =====================================================
+   Normal Buyback
+===================================================== */
+
+.buyback-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+}
+
+.buyback-item {
+  min-height: 135px;
+
+  padding: 22px;
+
+  border-right: 1px solid #edf0f3;
+}
+
+.buyback-item:last-child {
+  border-right: none;
+}
+
+.buyback-name {
+  color: #727b86;
+
+  font-size: 12px;
+}
+
+.buyback-price {
+  margin-top: 13px;
+
+  color: #303843;
+
+  font-size: 23px;
+  font-weight: 700;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+.buyback-price span {
+  margin-left: 4px;
+
+  color: #969da6;
+
+  font-size: 10px;
+
+  font-weight: 400;
+}
+
+.buyback-formula {
+  margin-top: 7px;
+
+  color: #a6acb4;
+
+  font-size: 9px;
+}
+
+
+/* =====================================================
+   Old Material
+===================================================== */
+
+.old-material-section {
+  margin-top: 24px;
+
+  padding: 0;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e5e9;
+
+  border-radius: 14px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 8px 26px rgba(
+      30,
+      38,
+      50,
+      0.045
+    );
+}
+
+
+/* Header */
+
+.old-material-header {
+  padding: 21px 23px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background:
+    linear-gradient(
+      90deg,
+      #fbfaf7 0%,
+      #ffffff 100%
+    );
+
+  border-bottom: 1px solid #eceef1;
+}
+
+.old-material-title {
+  color: #303741;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.old-material-subtitle {
+  margin-top: 4px;
+
+  color: #a19a8e;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  letter-spacing: 1.6px;
+}
+
+.old-material-badge {
+  padding: 6px 10px;
+
+  border: 1px solid #e7dfd1;
+
+  border-radius: 6px;
+
+  background: #faf8f4;
+
+  color: #947548;
+
+  font-size: 10px;
+}
+
+
+/* Old material cards */
+
+.old-material-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+}
+
+.old-material-card {
+  min-height: 155px;
+
+  padding: 22px;
+
+  border-right: 1px solid #edf0f3;
+}
+
+.old-material-card:last-child {
+  border-right: none;
+}
+
+.old-material-top {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+}
+
+.old-material-name {
+  color: #545d68;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.old-material-symbol {
+  color: #a3875a;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.old-material-price {
+  margin-top: 17px;
+
+  color: #272f39;
+
+  font-size: 24px;
+  font-weight: 700;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+.old-material-price span {
+  margin-left: 4px;
+
+  color: #9ca2aa;
+
+  font-size: 10px;
+
+  font-weight: 400;
+}
+
+.old-material-rule {
+  margin-top: 7px;
+
+  color: #aaa;
+  font-size: 9px;
+}
+
+
+/* Notice */
+
+.old-material-notice {
+  margin: 0 22px 21px;
+
+  padding: 13px 15px;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 10px;
+
+  border-radius: 8px;
+
+  background: #faf9f6;
+
+  border: 1px solid #eee9df;
+}
+
+.old-notice-icon {
+  flex: 0 0 auto;
+
+  width: 22px;
+  height: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #eee7da;
+
+  color: #947548;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.old-notice-title {
+  color: #6d604d;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.old-notice-text {
+  margin-top: 4px;
+
+  color: #9d9589;
+
+  font-size: 10px;
+
+  line-height: 1.7;
+}
+
+
+/* =====================================================
+   Market Info
+===================================================== */
+
+.market-info {
+  margin-top: 24px;
+
+  background: #ffffff;
+
+  border: 1px solid #e6e9ed;
+
+  border-radius: 13px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 7px 24px rgba(
+      30,
+      38,
+      50,
+      0.03
+    );
+}
+
+.market-title {
+  padding: 18px 22px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  border-bottom: 1px solid #edf0f3;
+
+  color: #343b46;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.market-title-en {
+  color: #a5abb3;
+
+  font-size: 8px;
+
+  letter-spacing: 1.5px;
+}
+
+.market-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+}
+
+.market-item {
+  min-height: 125px;
+
+  padding: 22px;
+
+  border-right: 1px solid #edf0f3;
+}
+
+.market-item:last-child {
+  border-right: none;
+}
+
+.market-item-label {
+  color: #858d97;
+
+  font-size: 12px;
+}
+
+.market-item-value {
+  margin-top: 13px;
+
+  color: #303843;
+
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.market-item-desc {
+  margin-top: 7px;
+
+  color: #aab0b8;
+
+  font-size: 8px;
+
+  letter-spacing: 1.3px;
+}
+
+
+/* =====================================================
+   Update
+===================================================== */
+
+.update-panel {
+  margin-top: 18px;
+
+  padding: 17px 21px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  background: #fafbfc;
+
+  border: 1px solid #e6e9ed;
+
+  border-radius: 11px;
+}
+
+.update-left {
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+}
+
+.update-icon {
+  width: 33px;
+  height: 33px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e5e9;
+
+  color: #947548;
+
+  font-size: 16px;
+}
+
+.update-title {
+  color: #4a525d;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.update-desc {
+  margin-top: 3px;
+
+  color: #9ba2ab;
+
+  font-size: 10px;
+}
+
+.update-time {
+  text-align: right;
+}
+
+.update-time-label {
+  color: #a2a8b0;
+
+  font-size: 9px;
+}
+
+.update-time-value {
+  margin-top: 3px;
+
+  color: #5a626d;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+
+/* =====================================================
+   Error
+===================================================== */
+
+.error-panel {
+  margin-top: 14px;
+
+  padding: 15px 17px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  background: #fffafa;
+
+  border: 1px solid #f0dddd;
+
+  border-radius: 11px;
+}
+
+.error-icon {
+  flex: 0 0 auto;
+
+  width: 29px;
+  height: 29px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #f6e8e8;
+
+  color: #bd6262;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.error-content {
+  flex: 1;
+}
+
+.error-title {
+  color: #7d5050;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.error-text {
+  margin-top: 3px;
+
+  color: #a27c7c;
+
+  font-size: 10px;
+
+  line-height: 1.6;
+}
+
+.retry-button {
+  padding: 8px 14px;
+
+  border: 1px solid #dddfe3;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #5e6670;
+
+  font-size: 11px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.retry-button:hover {
+  background: #f4f5f7;
+
+  border-color: #cdd1d6;
+}
+
+
+/* =====================================================
+   Company
+===================================================== */
+
+.company-card {
+  margin-top: 24px;
+
+  padding: 21px 23px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  background: #202733;
+
+  border-radius: 13px;
+
+  box-shadow:
+    0 10px 28px rgba(
+      30,
+      38,
+      50,
+      0.1
+    );
+}
+
+.company-main {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.company-mark {
+  width: 39px;
+  height: 39px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: rgba(
+    255,
+    255,
+    255,
+    0.08
+  );
+
+  color: #d9b778;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 1px;
+}
+
+.company-name {
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.company-desc {
+  margin-top: 4px;
+
+  color: #aeb5be;
+
+  font-size: 10px;
+}
+
+.phone-button {
+  padding: 9px 14px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  border: 1px solid rgba(
+    255,
+    255,
+    255,
+    0.12
+  );
+
+  border-radius: 7px;
+
+  color: #e4e7eb;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.phone-button:hover {
+  background: rgba(
+    255,
+    255,
+    255,
+    0.07
+  );
+
+  border-color: rgba(
+    255,
+    255,
+    255,
+    0.2
+  );
+}
+
+
+/* =====================================================
+   Notice
+===================================================== */
+
+.notice {
+  margin-top: 14px;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 7px;
+
+  color: #9aa1aa;
+
+  font-size: 10px;
+
+  line-height: 1.7;
+}
+
+.notice > span {
+  color: #a5abb3;
+}
+
+.notice p {
+  margin: 0;
+}
+
+
+/* =====================================================
+   Footer
+===================================================== */
+
+.footer {
+  padding: 24px 20px 34px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+
+  border-top: 1px solid #e6e9ed;
+
+  color: #a3a9b2;
+
+  font-size: 9px;
+}
+
+
+/* =====================================================
+   Tablet
+===================================================== */
+
+@media (max-width: 900px) {
+
+  .metal-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .buyback-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .buyback-item:nth-child(2) {
+    border-right: none;
+  }
+
+  .buyback-item:nth-child(-n + 2) {
+    border-bottom: 1px solid #edf0f3;
+  }
+
+  .old-material-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .old-material-card:nth-child(2) {
+    border-right: none;
+  }
+
+  .old-material-card:nth-child(-n + 2) {
+    border-bottom: 1px solid #edf0f3;
+  }
+}
+
+
+
+
+/* =====================================================
+   Mobile
+===================================================== */
+
+@media (max-width: 600px) {
+
+  /* =========================
+     Header
+  ========================= */
+
+  .header-inner {
+    width: calc(100% - 24px);
+    height: 62px;
+  }
+
+  .brand {
+    gap: 10px;
+  }
+
+  .brand-logo {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    font-size: 11px;
+  }
+
+  .brand-name {
+    font-size: 15px;
+    letter-spacing: 0.5px;
+  }
+
+  .brand-subtitle {
+    display: none;
+  }
+
+  .header-status {
+    font-size: 9px;
+    gap: 6px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+
+  /* =========================
+     Main
+  ========================= */
+
+  .main {
+    width: calc(100% - 20px);
+
+    padding:
+      25px
+      0
+      35px;
+  }
+
+
+  /* =========================
+     Hero
+  ========================= */
+
+  .hero {
+    margin-bottom: 20px;
+  }
+
+  .hero-label {
+    margin-bottom: 7px;
+
+    font-size: 7px;
+    letter-spacing: 2px;
+  }
+
+  .hero h1 {
+    font-size: 25px;
+    line-height: 1.25;
+    letter-spacing: 0.5px;
+  }
+
+  .hero p {
+    margin-top: 7px;
+    font-size: 10px;
+  }
+
+
+  /* =========================
+     Four Metals
+  ========================= */
+
+  .metal-grid {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .metal-card {
+    min-height: 0;
+
+    padding:
+      16px
+      17px;
+
+    border-radius: 11px;
+  }
+
+  .metal-card-top {
+    align-items: center;
+  }
+
+  .metal-name {
+    font-size: 14px;
+  }
+
+  .metal-en {
+    margin-top: 2px;
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
+
+  .metal-symbol {
+    width: 29px;
+    height: 29px;
+
+    border-radius: 7px;
+
+    font-size: 9px;
+  }
+
+  .metal-price {
+    margin-top: 18px;
+
+    font-size: 27px;
+    line-height: 1.05;
+  }
+
+  .metal-unit {
+    margin-top: 5px;
+    font-size: 9px;
+  }
+
+  .metal-card-bottom {
+    margin-top: 13px;
+
+    padding-top: 9px;
+
+    font-size: 8px;
+  }
+
+
+  /* =========================
+     Common Section
+  ========================= */
+
+  .section-block {
+    margin-top: 16px;
+    border-radius: 11px;
+  }
+
+  .section-heading {
+    padding:
+      13px
+      15px;
+  }
+
+  .section-title {
+    font-size: 13px;
+  }
+
+  .section-subtitle {
+    margin-top: 2px;
+    font-size: 7px;
+    letter-spacing: 1.2px;
+  }
+
+  .section-note {
+    padding:
+      4px
+      7px;
+
+    font-size: 8px;
+  }
+
+
+  /* =========================
+     Normal Buyback
+  ========================= */
+
+  .buyback-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .buyback-item {
+    min-height: 0;
+
+    padding:
+      13px
+      15px;
+
+    border-right: none;
+
+    border-bottom: 1px solid #edf0f3;
+  }
+
+  .buyback-item:last-child {
+    border-bottom: none;
+  }
+
+  .buyback-name {
+    font-size: 10px;
+  }
+
+  .buyback-price {
+    margin-top: 7px;
+
+    font-size: 20px;
+  }
+
+  .buyback-price span {
+    margin-left: 3px;
+    font-size: 8px;
+  }
+
+  .buyback-formula {
+    margin-top: 4px;
+    font-size: 8px;
+  }
+
+
+  /* =========================
+     Old Material
+  ========================= */
+
+  .old-material-section {
+    margin-top: 16px;
+    border-radius: 11px;
+  }
+
+  .old-material-header {
+    padding:
+      14px
+      15px;
+  }
+
+  .old-material-title {
+    font-size: 14px;
+  }
+
+  .old-material-subtitle {
+    margin-top: 2px;
+
+    font-size: 7px;
+    letter-spacing: 1.2px;
+  }
+
+  .old-material-badge {
+    padding:
+      5px
+      7px;
+
+    border-radius: 5px;
+
+    font-size: 8px;
+  }
+
+
+  /* Old material cards */
+
+  .old-material-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .old-material-card {
+    min-height: 0;
+
+    padding:
+      13px
+      15px;
+
+    border-right: none;
+
+    border-bottom: 1px solid #edf0f3;
+  }
+
+  .old-material-card:last-child {
+    border-bottom: none;
+  }
+
+  .old-material-top {
+    align-items: center;
+  }
+
+  .old-material-name {
+    font-size: 10px;
+  }
+
+  .old-material-symbol {
+    font-size: 9px;
+  }
+
+  .old-material-price {
+    margin-top: 7px;
+
+    font-size: 20px;
+  }
+
+  .old-material-price span {
+    margin-left: 3px;
+    font-size: 8px;
+  }
+
+  .old-material-rule {
+    margin-top: 4px;
+    font-size: 8px;
+  }
+
+
+  /* Old material notice */
+
+  .old-material-notice {
+    margin:
+      10px
+      10px
+      12px;
+
+    padding:
+      9px
+      10px;
+
+    gap: 7px;
+
+    border-radius: 7px;
+  }
+
+  .old-notice-icon {
+    width: 19px;
+    height: 19px;
+
+    font-size: 9px;
+  }
+
+  .old-notice-title {
+    font-size: 9px;
+  }
+
+  .old-notice-text {
+    margin-top: 3px;
+
+    font-size: 8px;
+    line-height: 1.55;
+  }
+
+
+  /* =========================
+     Market Info
+  ========================= */
+
+  .market-info {
+    margin-top: 16px;
+    border-radius: 11px;
+  }
+
+  .market-title {
+    padding:
+      13px
+      15px;
+
+    gap: 8px;
+
+    font-size: 12px;
+  }
+
+  .market-title-en {
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
+
+  .market-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .market-item {
+    min-height: 0;
+
+    padding:
+      12px
+      15px;
+
+    border-right: none;
+
+    border-bottom: 1px solid #edf0f3;
+  }
+
+  .market-item:last-child {
+    border-bottom: none;
+  }
+
+  .market-item-label {
+    font-size: 10px;
+  }
+
+  .market-item-value {
+    margin-top: 5px;
+    font-size: 19px;
+  }
+
+  .market-item-desc {
+    margin-top: 3px;
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
+
+
+  /* =========================
+     Update
+  ========================= */
+
+  .update-panel {
+    margin-top: 12px;
+
+    padding:
+      12px
+      14px;
+
+    display: block;
+
+    border-radius: 9px;
+  }
+
+  .update-left {
+    gap: 8px;
+  }
+
+  .update-icon {
+    width: 28px;
+    height: 28px;
+
+    font-size: 13px;
+  }
+
+  .update-title {
+    font-size: 10px;
+  }
+
+  .update-desc {
+    margin-top: 2px;
+    font-size: 8px;
+  }
+
+  .update-time {
+    margin-top: 8px;
+
+    padding-top: 8px;
+
+    text-align: left;
+
+    border-top: 1px solid #e8ebee;
+  }
+
+  .update-time-label {
+    font-size: 8px;
+  }
+
+  .update-time-value {
+    margin-top: 2px;
+    font-size: 10px;
+  }
+
+
+  /* =========================
+     Error
+  ========================= */
+
+  .error-panel {
+    margin-top: 10px;
+
+    padding:
+      11px
+      13px;
+
+    align-items: flex-start;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    border-radius: 9px;
+  }
+
+  .error-icon {
+    width: 25px;
+    height: 25px;
+
+    font-size: 10px;
+  }
+
+  .error-title {
+    font-size: 10px;
+  }
+
+  .error-text {
+    margin-top: 2px;
+    font-size: 8px;
+  }
+
+  .retry-button {
+    margin-left: 33px;
+
+    padding:
+      6px
+      10px;
+
+    font-size: 9px;
+  }
+
+
+  /* =========================
+     Company
+  ========================= */
+
+  .company-card {
+    margin-top: 16px;
+
+    padding:
+      15px;
+
+    align-items: center;
+
+    border-radius: 10px;
+  }
+
+  .company-main {
+    gap: 9px;
+  }
+
+  .company-mark {
+    width: 32px;
+    height: 32px;
+
+    border-radius: 7px;
+
+    font-size: 9px;
+  }
+
+  .company-name {
+    font-size: 13px;
+  }
+
+  .company-desc {
+    max-width: 180px;
+
+    margin-top: 3px;
+
+    font-size: 8px;
+    line-height: 1.4;
+  }
+
+  .phone-button {
+    padding:
+      7px
+      9px;
+
+    gap: 5px;
+
+    border-radius: 6px;
+
+    font-size: 8px;
+  }
+
+  .phone-button span {
+    display: none;
+  }
+
+
+  /* =========================
+     Notice
+  ========================= */
+
+  .notice {
+    margin-top: 10px;
+
+    gap: 5px;
+
+    font-size: 8px;
+
+    line-height: 1.55;
+  }
+
+
+  /* =========================
+     Footer
+  ========================= */
+
+  .footer {
+    padding:
+      18px
+      15px
+      25px;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+    font-size: 8px;
+
+    text-align: center;
+  }
+}
+
+
+/* =====================================================
+   Small Mobile
+===================================================== */
+
+@media (max-width: 370px) {
+
+  .header-inner {
+    height: 59px;
+  }
+
+  .brand-logo {
+    width: 33px;
+    height: 33px;
+  }
+
+  .brand-name {
+    font-size: 14px;
+  }
+
+  .header-status {
+    font-size: 8px;
+  }
+
+
+  .main {
+    width: calc(100% - 18px);
+
+    padding-top: 22px;
+    padding-bottom: 30px;
+  }
+
+
+  .hero {
+    margin-bottom: 17px;
+  }
+
+  .hero h1 {
+    font-size: 23px;
+  }
+
+  .hero p {
+    font-size: 9px;
+  }
+
+
+  .metal-grid {
+    gap: 8px;
+  }
+
+  .metal-card {
+    padding:
+      14px
+      15px;
+  }
+
+  .metal-name {
+    font-size: 13px;
+  }
+
+  .metal-price {
+    margin-top: 16px;
+    font-size: 25px;
+  }
+
+  .metal-card-bottom {
+    margin-top: 11px;
+    padding-top: 8px;
+  }
+
+
+  .section-block,
+  .old-material-section,
+  .market-info {
+    margin-top: 14px;
+  }
+
+
+  .section-heading {
+    padding:
+      12px
+      14px;
+  }
+
+
+  .buyback-item {
+    padding:
+      12px
+      14px;
+  }
+
+  .buyback-price {
+    font-size: 19px;
+  }
+
+
+  .old-material-header {
+    padding:
+      13px
+      14px;
+  }
+
+  .old-material-title {
+    font-size: 13px;
+  }
+
+  .old-material-card {
+    padding:
+      12px
+      14px;
+  }
+
+  .old-material-price {
+    font-size: 19px;
+  }
+
+
+  .market-item {
+    padding:
+      11px
+      14px;
+  }
+
+  .market-item-value {
+    font-size: 18px;
+  }
+
+
+  .company-card {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 10px;
+  }
+
+  .phone-button {
+    width: 100%;
+
+    justify-content: center;
+  }
+}
