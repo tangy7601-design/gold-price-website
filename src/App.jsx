@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react'
 import './App.css'
 
@@ -23,6 +22,9 @@ const EXCHANGE_API_URL = 'https://open.er-api.com/v6/latest/USD'
 // 自动刷新：60 秒
 const REFRESH_INTERVAL = 60 * 1000
 
+// API 请求最长等待时间：15 秒
+const REQUEST_TIMEOUT = 15 * 1000
+
 // 1 金衡盎司 = 31.1034768 克
 const GRAMS_PER_OUNCE = 31.1034768
 
@@ -30,16 +32,11 @@ const GRAMS_PER_OUNCE = 31.1034768
 // 普通回购价模板
 // =====================================================
 //
-// 这里是普通回购参考价。
-// 后期可以按照你们实际经营价格自行调整。
-//
 // 黄金：实时价格 - 10 元/克
 // 白银：实时价格 - 0.50 元/克
 // 铂金：实时价格 - 20 元/克
 // 钯金：实时价格 - 25 元/克
 //
-// =====================================================
-
 const NORMAL_BUYBACK_DIFF = {
   gold: 10,
   silver: 0.5,
@@ -50,35 +47,20 @@ const NORMAL_BUYBACK_DIFF = {
 // =====================================================
 // 旧料回购模板
 // =====================================================
-//
-// 这里只是模板参考价格。
-// 实际价格可以根据：
-// 成色 / 重量 / 检测结果 / 损耗 / 市场行情
-// 进行面议。
-//
-// 黄金旧料：实时价 - 15 元/克
-// 白银旧料：实时价 × 95%
-// 铂金旧料：实时价 - 20 元/克
-// 钯金旧料：实时价 - 25 元/克
-//
-// =====================================================
 
 const OLD_MATERIAL_RULES = {
   gold: {
     type: 'subtract',
     value: 15,
   },
-
   silver: {
     type: 'percent',
     value: 0.95,
   },
-
   platinum: {
     type: 'subtract',
     value: 20,
   },
-
   palladium: {
     type: 'subtract',
     value: 25,
@@ -98,7 +80,6 @@ const METALS = [
     unit: '元 / 克',
     icon: 'Au',
   },
-
   {
     key: 'silver',
     symbol: 'XAG',
@@ -107,7 +88,6 @@ const METALS = [
     unit: '元 / 克',
     icon: 'Ag',
   },
-
   {
     key: 'platinum',
     symbol: 'XPT',
@@ -116,7 +96,6 @@ const METALS = [
     unit: '元 / 克',
     icon: 'Pt',
   },
-
   {
     key: 'palladium',
     symbol: 'XPD',
@@ -133,7 +112,7 @@ const METALS = [
 
 function App() {
   // ===================================================
-  // State
+  // 金属价格
   // ===================================================
 
   const [metalPrices, setMetalPrices] = useState({
@@ -143,7 +122,15 @@ function App() {
     palladium: null,
   })
 
+  // ===================================================
+  // 汇率
+  // ===================================================
+
   const [exchangeRate, setExchangeRate] = useState(null)
+
+  // ===================================================
+  // 页面状态
+  // ===================================================
 
   const [loading, setLoading] = useState(true)
 
@@ -152,15 +139,47 @@ function App() {
   const [lastUpdated, setLastUpdated] = useState(null)
 
   // ===================================================
-  // 获取单个金属价格
+  // 每个金属单独记录错误
+  // ===================================================
+
+  const [metalErrors, setMetalErrors] = useState({
+    gold: false,
+    silver: false,
+    platinum: false,
+    palladium: false,
+  })
+
+  // ===================================================
+  // 请求超时控制
+  // ===================================================
+
+  const fetchWithTimeout = async (url) => {
+    const controller = new AbortController()
+
+    const timeoutId = setTimeout(() => {
+      controller.abort()
+    }, REQUEST_TIMEOUT)
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        cache: 'no-store',
+        signal: controller.signal,
+      })
+
+      return response
+    } finally {
+      clearTimeout(timeoutId)
+    }
+  }
+
+  // ===================================================
+  // 获取单个贵金属价格
   // ===================================================
 
   const fetchMetalPrice = async (symbol) => {
-    const response = await fetch(
-      `${GOLD_API_BASE}/${symbol}`,
-      {
-        cache: 'no-store',
-      }
+    const response = await fetchWithTimeout(
+      `${GOLD_API_BASE}/${symbol}`
     )
 
     if (!response.ok) {
@@ -171,7 +190,7 @@ function App() {
 
     const price = Number(data?.price)
 
-    if (!price || Number.isNaN(price)) {
+    if (!Number.isFinite(price) || price <= 0) {
       throw new Error(`${symbol} 返回价格无效`)
     }
 
@@ -183,11 +202,8 @@ function App() {
   // ===================================================
 
   const fetchExchangeRate = async () => {
-    const response = await fetch(
-      EXCHANGE_API_URL,
-      {
-        cache: 'no-store',
-      }
+    const response = await fetchWithTimeout(
+      EXCHANGE_API_URL
     )
 
     if (!response.ok) {
@@ -196,9 +212,13 @@ function App() {
 
     const data = await response.json()
 
+    if (data?.result !== 'success') {
+      throw new Error('美元人民币汇率接口返回失败')
+    }
+
     const rate = Number(data?.rates?.CNY)
 
-    if (!rate || Number.isNaN(rate)) {
+    if (!Number.isFinite(rate) || rate <= 0) {
       throw new Error('人民币汇率数据无效')
     }
 
@@ -206,93 +226,155 @@ function App() {
   }
 
   // ===================================================
-  // 获取全部行情
+  // 更新所有价格
   // ===================================================
 
   const updatePrices = async () => {
+    setLoading(true)
+
+    let successCount = 0
+
+    // ---------------------------------------------------
+    // 先获取汇率
+    // ---------------------------------------------------
+
+    let usdCny = exchangeRate
+
     try {
-      setLoading(true)
-
-      // 同时请求四种贵金属
-      const [goldUSD, silverUSD, platinumUSD, palladiumUSD] =
-        await Promise.all([
-          fetchMetalPrice('XAU'),
-          fetchMetalPrice('XAG'),
-          fetchMetalPrice('XPT'),
-          fetchMetalPrice('XPD'),
-        ])
-
-      // 获取美元人民币汇率
-      const usdCny = await fetchExchangeRate()
-
-      // =================================================
-      // 国际价格：
-      //
-      // API：
-      // USD / 金衡盎司
-      //
-      // 转换：
-      //
-      // USD / 盎司
-      // ↓
-      // USD / 克
-      // ↓
-      // CNY / 克
-      // =================================================
-
-      const convertToCNYPerGram = (usdPerOunce) => {
-        return (
-          (usdPerOunce / GRAMS_PER_OUNCE) *
-          usdCny
-        )
-      }
-
-      const prices = {
-        gold: convertToCNYPerGram(goldUSD),
-        silver: convertToCNYPerGram(silverUSD),
-        platinum: convertToCNYPerGram(platinumUSD),
-        palladium: convertToCNYPerGram(palladiumUSD),
-      }
-
-      // =================================================
-      // 保存价格
-      // =================================================
-
-      setMetalPrices(prices)
+      usdCny = await fetchExchangeRate()
 
       setExchangeRate(usdCny)
-
-      setLastUpdated(new Date())
-
-      setApiError(false)
     } catch (error) {
-      console.error('贵金属行情更新失败：', error)
+      console.error('汇率获取失败：', error)
+    }
 
-      // ================================================
-      // API 失败：
-      //
-      // 不清空原来的价格。
-      //
-      // 如果之前已经获取成功：
-      // 继续显示上一次价格。
-      //
-      // ================================================
+    // ---------------------------------------------------
+    // 如果汇率失败，而且以前没有成功汇率
+    // 就暂时不能计算新的人民币价格
+    // ---------------------------------------------------
+
+    if (!usdCny) {
+      console.error('没有可用的美元人民币汇率')
 
       setApiError(true)
-    } finally {
       setLoading(false)
+
+      return
     }
+
+    // ---------------------------------------------------
+    // 美元/盎司 → 人民币/克
+    // ---------------------------------------------------
+
+    const convertToCNYPerGram = (usdPerOunce) => {
+      return (
+        (usdPerOunce / GRAMS_PER_OUNCE) *
+        usdCny
+      )
+    }
+
+    // ---------------------------------------------------
+    // 逐个获取金属
+    //
+    // 不再使用 Promise.all
+    //
+    // 一个失败不会影响另外三个
+    // ---------------------------------------------------
+
+    const results = {}
+
+    for (const metal of METALS) {
+      try {
+        const usdPrice = await fetchMetalPrice(
+          metal.symbol
+        )
+
+        const cnyPrice =
+          convertToCNYPerGram(usdPrice)
+
+        if (
+          Number.isFinite(cnyPrice) &&
+          cnyPrice > 0
+        ) {
+          results[metal.key] = cnyPrice
+          successCount += 1
+        }
+      } catch (error) {
+        console.error(
+          `${metal.name}行情获取失败：`,
+          error
+        )
+
+        results[metal.key] = null
+      }
+    }
+
+    // ---------------------------------------------------
+    // 更新金属错误状态
+    // ---------------------------------------------------
+
+    const newMetalErrors = {}
+
+    METALS.forEach((metal) => {
+      newMetalErrors[metal.key] =
+        results[metal.key] === null
+    })
+
+    setMetalErrors(newMetalErrors)
+
+    // ---------------------------------------------------
+    // 只更新成功获取到的价格
+    //
+    // 失败的金属保留原来的价格
+    // 不会因为一次 API 波动全部变成 --
+    // ---------------------------------------------------
+
+    setMetalPrices((previousPrices) => {
+      const newPrices = {
+        ...previousPrices,
+      }
+
+      METALS.forEach((metal) => {
+        if (
+          results[metal.key] !== null &&
+          results[metal.key] !== undefined
+        ) {
+          newPrices[metal.key] =
+            results[metal.key]
+        }
+      })
+
+      return newPrices
+    })
+
+    // ---------------------------------------------------
+    // 只要至少有一个金属成功，就记录更新时间
+    // ---------------------------------------------------
+
+    if (successCount > 0) {
+      setLastUpdated(new Date())
+    }
+
+    // ---------------------------------------------------
+    // 错误状态
+    // ---------------------------------------------------
+
+    if (successCount === METALS.length) {
+      setApiError(false)
+    } else {
+      setApiError(true)
+    }
+
+    setLoading(false)
   }
 
   // ===================================================
-  // 第一次加载 + 自动刷新
+  // 页面加载 + 自动刷新
   // ===================================================
 
   useEffect(() => {
-    // 第一次打开页面立即获取
     updatePrices()
 
-    // 每 60 秒更新一次
     const timer = setInterval(() => {
       updatePrices()
     }, REFRESH_INTERVAL)
@@ -310,19 +392,22 @@ function App() {
     if (
       price === null ||
       price === undefined ||
-      Number.isNaN(price)
+      !Number.isFinite(Number(price))
     ) {
       return '--'
     }
 
-    return price.toLocaleString('zh-CN', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })
+    return Number(price).toLocaleString(
+      'zh-CN',
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
+    )
   }
 
   // ===================================================
-  // 格式化更新时间
+  // 格式化时间
   // ===================================================
 
   const formatTime = (date) => {
@@ -330,22 +415,28 @@ function App() {
       return '--'
     }
 
-    return date.toLocaleTimeString('zh-CN', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    })
+    return date.toLocaleTimeString(
+      'zh-CN',
+      {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      }
+    )
   }
 
   // ===================================================
-  // 普通回购价格
+  // 普通回购价
   // ===================================================
 
   const getNormalBuybackPrice = (key) => {
     const price = metalPrices[key]
 
-    if (price === null || price === undefined) {
+    if (
+      price === null ||
+      price === undefined
+    ) {
       return null
     }
 
@@ -355,20 +446,26 @@ function App() {
   }
 
   // ===================================================
-  // 旧料回购价格
+  // 旧料回购价
   // ===================================================
 
   const getOldMaterialPrice = (key) => {
     const price = metalPrices[key]
 
-    if (price === null || price === undefined) {
+    if (
+      price === null ||
+      price === undefined
+    ) {
       return null
     }
 
     const rule = OLD_MATERIAL_RULES[key]
 
     if (rule.type === 'subtract') {
-      return Math.max(price - rule.value, 0)
+      return Math.max(
+        price - rule.value,
+        0
+      )
     }
 
     if (rule.type === 'percent') {
@@ -379,7 +476,7 @@ function App() {
   }
 
   // ===================================================
-  // 旧料规则文字
+  // 旧料回购规则文字
   // ===================================================
 
   const getOldMaterialRuleText = (key) => {
@@ -417,6 +514,7 @@ function App() {
             </div>
 
             <div>
+
               <div className="brand-name">
                 鹏图商贸
               </div>
@@ -424,6 +522,7 @@ function App() {
               <div className="brand-subtitle">
                 PRECIOUS METALS · RECOVERY &amp; TRADING
               </div>
+
             </div>
 
           </div>
@@ -439,8 +538,10 @@ function App() {
             ></span>
 
             <span>
-              {apiError
-                ? '行情更新异常'
+              {loading
+                ? '正在获取行情'
+                : apiError
+                ? '部分行情异常'
                 : '实时行情'}
             </span>
 
@@ -448,7 +549,6 @@ function App() {
 
         </div>
       </header>
-
 
       {/* =================================================
           主体
@@ -476,9 +576,8 @@ function App() {
 
         </section>
 
-
         {/* =================================================
-            四种贵金属行情
+            金属价格
         ================================================= */}
 
         <section className="metal-grid">
@@ -487,6 +586,9 @@ function App() {
 
             const price =
               metalPrices[metal.key]
+
+            const hasError =
+              metalErrors[metal.key]
 
             return (
               <div
@@ -514,16 +616,13 @@ function App() {
 
                 </div>
 
-
                 <div className="metal-price">
                   ¥{formatPrice(price)}
                 </div>
 
-
                 <div className="metal-unit">
                   {metal.unit}
                 </div>
-
 
                 <div className="metal-card-bottom">
 
@@ -532,7 +631,9 @@ function App() {
                   </span>
 
                   <span>
-                    国际现货参考
+                    {hasError
+                      ? '行情获取异常'
+                      : '国际现货参考'}
                   </span>
 
                 </div>
@@ -542,7 +643,6 @@ function App() {
           })}
 
         </section>
-
 
         {/* =================================================
             普通回购
@@ -570,7 +670,6 @@ function App() {
 
           </div>
 
-
           <div className="buyback-grid">
 
             {METALS.map((metal) => {
@@ -579,7 +678,9 @@ function App() {
                 metalPrices[metal.key]
 
               const buybackPrice =
-                getNormalBuybackPrice(metal.key)
+                getNormalBuybackPrice(
+                  metal.key
+                )
 
               return (
                 <div
@@ -592,16 +693,22 @@ function App() {
                   </div>
 
                   <div className="buyback-price">
+
                     ¥{formatPrice(buybackPrice)}
+
                     <span>
                       / 克
                     </span>
+
                   </div>
 
                   <div className="buyback-formula">
-                    {marketPrice !== null
+
+                    {marketPrice !== null &&
+                    marketPrice !== undefined
                       ? `实时价 - ${NORMAL_BUYBACK_DIFF[metal.key]} 元`
                       : '等待行情'}
+
                   </div>
 
                 </div>
@@ -611,7 +718,6 @@ function App() {
           </div>
 
         </section>
-
 
         {/* =================================================
             旧料回购
@@ -639,13 +745,14 @@ function App() {
 
           </div>
 
-
           <div className="old-material-grid">
 
             {METALS.map((metal) => {
 
               const oldPrice =
-                getOldMaterialPrice(metal.key)
+                getOldMaterialPrice(
+                  metal.key
+                )
 
               return (
                 <div
@@ -665,14 +772,15 @@ function App() {
 
                   </div>
 
-
                   <div className="old-material-price">
+
                     ¥{formatPrice(oldPrice)}
+
                     <span>
                       / 克
                     </span>
-                  </div>
 
+                  </div>
 
                   <div className="old-material-rule">
                     {getOldMaterialRuleText(
@@ -685,7 +793,6 @@ function App() {
             })}
 
           </div>
-
 
           <div className="old-material-notice">
 
@@ -711,7 +818,6 @@ function App() {
 
         </section>
 
-
         {/* =================================================
             行情数据
         ================================================= */}
@@ -730,7 +836,6 @@ function App() {
 
           </div>
 
-
           <div className="market-grid">
 
             <div className="market-item">
@@ -740,9 +845,11 @@ function App() {
               </div>
 
               <div className="market-item-value">
+
                 {exchangeRate !== null
                   ? formatPrice(exchangeRate)
                   : '--'}
+
               </div>
 
               <div className="market-item-desc">
@@ -750,7 +857,6 @@ function App() {
               </div>
 
             </div>
-
 
             <div className="market-item">
 
@@ -767,7 +873,6 @@ function App() {
               </div>
 
             </div>
-
 
             <div className="market-item">
 
@@ -789,9 +894,8 @@ function App() {
 
         </section>
 
-
         {/* =================================================
-            更新时间
+            自动更新
         ================================================= */}
 
         <section className="update-panel">
@@ -816,7 +920,6 @@ function App() {
 
           </div>
 
-
           <div className="update-time">
 
             <div className="update-time-label">
@@ -831,9 +934,8 @@ function App() {
 
         </section>
 
-
         {/* =================================================
-            API 错误
+            错误提示
         ================================================= */}
 
         {apiError && (
@@ -851,10 +953,13 @@ function App() {
               </div>
 
               <div className="error-text">
-                当前无法获取部分最新市场数据。
+
+                当前部分市场数据暂时无法获取。
+
                 {lastUpdated
-                  ? ' 页面继续显示上一次成功获取的价格。'
-                  : ' 请稍后刷新页面重试。'}
+                  ? ' 页面继续显示最近一次成功获取的价格。'
+                  : ' 请稍后点击重新获取。'}
+
               </div>
 
             </div>
@@ -862,14 +967,16 @@ function App() {
             <button
               className="retry-button"
               onClick={updatePrices}
+              disabled={loading}
             >
-              重新获取
+              {loading
+                ? '获取中...'
+                : '重新获取'}
             </button>
 
           </section>
 
         )}
-
 
         {/* =================================================
             公司信息
@@ -897,23 +1004,23 @@ function App() {
 
           </div>
 
-
           <a
             href="tel:15398755989"
             className="phone-button"
           >
+
             <span>
               ☎
             </span>
 
             15398755989
+
           </a>
 
         </section>
 
-
         {/* =================================================
-            最终说明
+            底部说明
         ================================================= */}
 
         <div className="notice">
@@ -932,7 +1039,6 @@ function App() {
         </div>
 
       </main>
-
 
       {/* =================================================
           Footer
