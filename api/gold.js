@@ -1,174 +1,168 @@
-// api/gold.js
-// 上海黄金交易所 Au99.99 最新行情接口
-// 作用：
-// 1. 请求上海黄金交易所行情数据
-// 2. 从历史数据中找到最新一条有效 Au99.99 数据
-// 3. 只返回最新价格，不把整份历史数据返回给前端
-
 export default async function handler(req, res) {
+  // =====================================================
+  // CORS
+  // =====================================================
+
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+
+  // 浏览器的预检请求
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end()
+  }
+
+  // 只允许 GET
+  if (req.method !== 'GET') {
+    return res.status(405).json({
+      success: false,
+      error: 'Method Not Allowed'
+    })
+  }
+
   try {
     // =====================================================
-    // 1. 请求上海黄金交易所行情数据
+    // 上海黄金交易所 Au99.99
     // =====================================================
 
     const response = await fetch(
       'https://www.sge.com.cn/graph/Dailyhq',
       {
         method: 'POST',
-
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/140.0.0.0 Safari/537.36',
-          'Referer': 'https://www.sge.com.cn/'
+          'Content-Type': 'application/x-www-form-urlencoded'
         },
-
         body: 'instid=Au99.99'
       }
     )
 
-    // =====================================================
-    // 2. 检查上海黄金交易所是否正常返回
-    // =====================================================
-
     if (!response.ok) {
       throw new Error(
-        `上海黄金交易所返回错误：${response.status}`
+        `Shanghai Gold Exchange HTTP ${response.status}`
       )
     }
 
-    // =====================================================
-    // 3. 读取 JSON
-    // =====================================================
-
-    const data = await response.json()
+    const text = await response.text()
 
     // =====================================================
-    // 4. 检查是否存在行情数据
+    // 尝试解析返回数据
     // =====================================================
 
-    if (
-      !data ||
-      !Array.isArray(data.time) ||
-      data.time.length === 0
-    ) {
-      throw new Error('没有获取到 Au99.99 行情数据')
+    let data
+
+    try {
+      data = JSON.parse(text)
+    } catch {
+      throw new Error('上海黄金交易所返回的数据不是有效 JSON')
     }
 
     // =====================================================
-    // 5. 找到最新一条有效行情
-    //
-    // 返回的数据类似：
-    //
-    // time: [
-    //   ["2016-12-19", 262.45, 262.76, 262.02, 263.5],
-    //   ["2016-12-20", 262.88, 262.06, 261.42, 263.7],
-    //   ...
-    // ]
-    //
-    // 第一项：日期
-    // 后面的数字：对应当天行情数据
-    //
-    // 我们从后往前寻找最新的有效数据。
+    // 找到最新的一条数据
     // =====================================================
 
     let latestRecord = null
 
-    for (let i = data.time.length - 1; i >= 0; i--) {
-      const record = data.time[i]
-
-      if (!Array.isArray(record) || record.length < 2) {
-        continue
-      }
-
-      const date = record[0]
-
-      // 从第二个元素开始寻找有效数字
-      const numbers = record
-        .slice(1)
-        .filter(
-          (value) =>
-            typeof value === 'number' &&
-            Number.isFinite(value) &&
-            value > 0
-        )
-
-      if (numbers.length === 0) {
-        continue
-      }
-
-      latestRecord = {
-        date,
-        numbers
-      }
-
-      break
+    if (Array.isArray(data)) {
+      latestRecord = data[data.length - 1]
+    } else if (Array.isArray(data?.data)) {
+      latestRecord = data.data[data.data.length - 1]
+    } else if (Array.isArray(data?.result)) {
+      latestRecord = data.result[data.result.length - 1]
+    } else if (Array.isArray(data?.rows)) {
+      latestRecord = data.rows[data.rows.length - 1]
     }
-
-    // =====================================================
-    // 6. 如果没有找到有效行情
-    // =====================================================
 
     if (!latestRecord) {
-      throw new Error('Au99.99 没有找到有效的最新行情')
+      throw new Error('没有找到 Au99.99 最新数据')
     }
 
     // =====================================================
-    // 7. 确定最新价格
-    //
-    // 上海黄金交易所这个数据接口不同版本返回字段
-    // 可能存在一定差异。
-    //
-    // 我们这里优先使用最后一个有效价格。
+    // 提取数字
     // =====================================================
 
-    const price =
-      latestRecord.numbers[
-        latestRecord.numbers.length - 1
-      ]
+    let values = []
+
+    if (Array.isArray(latestRecord)) {
+      values = latestRecord
+    } else if (typeof latestRecord === 'object') {
+      values = Object.values(latestRecord)
+    } else {
+      values = [latestRecord]
+    }
+
+    const numbers = values
+      .map((value) => {
+        if (typeof value === 'number') {
+          return value
+        }
+
+        if (typeof value === 'string') {
+          const match = value.match(
+            /-?\d+(?:\.\d+)/
+          )
+
+          return match ? Number(match[0]) : NaN
+        }
+
+        return NaN
+      })
+      .filter((value) => Number.isFinite(value))
+
+    if (numbers.length === 0) {
+      throw new Error('无法从上海黄金交易所数据中提取价格')
+    }
+
+    // 使用最新记录中的最后一个有效数字
+    const price = numbers[numbers.length - 1]
+
+    if (!Number.isFinite(price) || price <= 0) {
+      throw new Error('Au99.99 黄金价格无效')
+    }
 
     // =====================================================
-    // 8. 返回给前端
+    // 日期
+    // =====================================================
+
+    let date = new Date()
+      .toISOString()
+      .slice(0, 10)
+
+    if (Array.isArray(latestRecord)) {
+      const possibleDate = latestRecord.find(
+        (value) =>
+          typeof value === 'string' &&
+          /^\d{4}[-/]\d{1,2}[-/]\d{1,2}$/.test(value)
+      )
+
+      if (possibleDate) {
+        date = possibleDate.replace(/\//g, '-')
+      }
+    }
+
+    // =====================================================
+    // 返回给前端
     // =====================================================
 
     return res.status(200).json({
       success: true,
-
       source: 'Shanghai Gold Exchange',
-
       product: 'Au99.99',
-
       currency: 'CNY',
-
       unit: 'RMB/gram',
-
-      price: Number(price.toFixed(2)),
-
-      date: latestRecord.date,
-
+      price: Number(price),
+      date,
       updatedAt: new Date().toISOString()
     })
-  } catch (error) {
-    // =====================================================
-    // 9. 出错处理
-    // =====================================================
 
+  } catch (error) {
     console.error(
-      'Au99.99 API Error:',
+      'Gold API Error:',
       error
     )
 
     return res.status(500).json({
       success: false,
-
-      source: 'Shanghai Gold Exchange',
-
-      product: 'Au99.99',
-
-      error:
-        error instanceof Error
-          ? error.message
-          : '获取 Au99.99 行情失败'
+      error: error.message || '黄金价格获取失败'
     })
   }
 }
