@@ -1,6 +1,5 @@
-
 /* =====================================================
-   Global
+   基础
 ===================================================== */
 
 * {
@@ -13,17 +12,17 @@ html {
 
 body {
   margin: 0;
-
   font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
     "Microsoft YaHei",
     "PingFang SC",
-    "Noto Sans SC",
     Arial,
     sans-serif;
 
   background: #f5f6f8;
-
-  color: #202733;
+  color: #20242a;
 }
 
 button,
@@ -31,116 +30,86 @@ a {
   font-family: inherit;
 }
 
-a {
-  text-decoration: none;
+button {
+  cursor: pointer;
 }
 
 
 /* =====================================================
-   App
+   页面
 ===================================================== */
 
 .app {
   min-height: 100vh;
-
-  background:
-    linear-gradient(
-      180deg,
-      #f8f9fb 0%,
-      #f3f4f6 100%
-    );
+  background: #f5f6f8;
 }
 
 
 /* =====================================================
-   Header
+   顶部 Header
 ===================================================== */
 
 .header {
-  width: 100%;
-
   background: #ffffff;
-
-  border-bottom: 1px solid #e8eaee;
+  border-bottom: 1px solid #e8eaed;
 }
 
 .header-inner {
-  width: min(
-    1180px,
-    calc(100% - 40px)
-  );
-
-  height: 78px;
-
+  width: min(1180px, calc(100% - 40px));
   margin: 0 auto;
+
+  min-height: 72px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  gap: 20px;
 }
-
-
-/* Brand */
 
 .brand {
   display: flex;
   align-items: center;
-
-  gap: 13px;
+  gap: 12px;
 }
 
 .brand-logo {
-  width: 43px;
-  height: 43px;
+  width: 42px;
+  height: 42px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 10px;
-
-  background: #202733;
-
+  background: #22272e;
   color: #ffffff;
 
-  font-size: 13px;
-  font-weight: 700;
+  border-radius: 9px;
 
-  letter-spacing: 1px;
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .brand-name {
-  color: #202733;
-
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 700;
-
   letter-spacing: 1px;
 }
 
 .brand-subtitle {
   margin-top: 3px;
 
-  color: #9ba2ac;
-
-  font-size: 8px;
-  font-weight: 600;
-
-  letter-spacing: 1.4px;
+  font-size: 12px;
+  color: #9298a1;
 }
-
-
-/* Header status */
 
 .header-status {
   display: flex;
   align-items: center;
+  gap: 7px;
 
-  gap: 8px;
-
-  color: #747d88;
-
-  font-size: 12px;
+  font-size: 13px;
+  color: #777e88;
 }
 
 .status-dot {
@@ -148,36 +117,23 @@ a {
   height: 7px;
 
   border-radius: 50%;
+  background: #b5bac1;
 }
 
-.status-online {
-  background: #45a66d;
-
-  box-shadow:
-    0 0 0 4px rgba(69, 166, 109, 0.1);
-}
-
-.status-error {
-  background: #ca6464;
-
-  box-shadow:
-    0 0 0 4px rgba(202, 100, 100, 0.1);
+.status-dot.active {
+  background: #36a269;
 }
 
 
 /* =====================================================
-   Main
+   主体
 ===================================================== */
 
 .main {
-  width: min(
-    1080px,
-    calc(100% - 40px)
-  );
-
+  width: min(1180px, calc(100% - 40px));
   margin: 0 auto;
 
-  padding: 58px 0 70px;
+  padding: 30px 0 50px;
 }
 
 
@@ -186,855 +142,529 @@ a {
 ===================================================== */
 
 .hero {
-  text-align: center;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
 
-  margin-bottom: 38px;
+  gap: 30px;
+
+  margin-bottom: 22px;
 }
 
 .hero-label {
-  display: inline-block;
+  margin-bottom: 7px;
 
-  margin-bottom: 11px;
-
-  color: #a27d43;
-
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
+  letter-spacing: 1.8px;
 
-  letter-spacing: 3px;
+  color: #969ca4;
 }
 
-.hero h1 {
+.hero-title {
   margin: 0;
 
-  color: #202733;
-
-  font-size: 37px;
-  line-height: 1.3;
+  font-size: 30px;
+  line-height: 1.25;
 
   font-weight: 700;
-
-  letter-spacing: 2px;
+  letter-spacing: -0.5px;
 }
 
-.hero p {
-  margin: 10px 0 0;
+.hero-subtitle {
+  margin: 7px 0 0;
 
-  color: #858d98;
-
+  color: #858b94;
   font-size: 13px;
+}
+
+.hero-refresh {
+  flex-shrink: 0;
+
+  border: 1px solid #dcdfe4;
+  background: #ffffff;
+
+  padding: 9px 17px;
+
+  border-radius: 7px;
+
+  color: #444a52;
+  font-size: 13px;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.hero-refresh:hover {
+  background: #f7f8fa;
+  border-color: #cdd1d7;
+}
+
+.hero-refresh:disabled {
+  cursor: default;
+  opacity: 0.55;
 }
 
 
 /* =====================================================
-   Four Metal Cards
+   四大贵金属
 ===================================================== */
 
 .metal-grid {
   display: grid;
 
   grid-template-columns:
-    repeat(4, 1fr);
+    repeat(4, minmax(0, 1fr));
 
-  gap: 16px;
+  gap: 12px;
+
+  margin-bottom: 30px;
 }
 
 .metal-card {
-  min-height: 210px;
+  position: relative;
 
-  padding: 23px 22px;
+  min-height: 188px;
+
+  padding: 19px 19px 16px;
 
   background: #ffffff;
 
-  border: 1px solid #e6e9ed;
+  border: 1px solid #e7e9ed;
+  border-radius: 10px;
 
-  border-radius: 13px;
-
-  box-shadow:
-    0 7px 24px rgba(
-      30,
-      38,
-      50,
-      0.04
-    );
-
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  overflow: hidden;
 }
 
-.metal-card:hover {
-  transform: translateY(-2px);
+.metal-card::before {
+  content: "";
 
-  box-shadow:
-    0 12px 28px rgba(
-      30,
-      38,
-      50,
-      0.07
-    );
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 3px;
+
+  background: #d8dbe0;
 }
 
+.metal-gold::before {
+  background: #c9a54a;
+}
 
-/* Metal card top */
+.metal-silver::before {
+  background: #9da5ad;
+}
+
+.metal-platinum::before {
+  background: #7d8792;
+}
+
+.metal-palladium::before {
+  background: #777f88;
+}
 
 .metal-card-top {
   display: flex;
-
-  align-items: flex-start;
   justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 10px;
+}
+
+.metal-en {
+  font-size: 9px;
+  letter-spacing: 1.2px;
+
+  color: #a0a5ad;
 }
 
 .metal-name {
-  color: #343b46;
+  margin-top: 4px;
 
   font-size: 17px;
   font-weight: 700;
 }
 
-.metal-en {
-  margin-top: 4px;
-
-  color: #a0a7b0;
-
-  font-size: 8px;
-  font-weight: 600;
-
-  letter-spacing: 1.3px;
-}
-
 .metal-symbol {
-  width: 34px;
-  height: 34px;
+  padding: 4px 7px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px solid #e5e7ea;
+  border-radius: 5px;
 
-  border-radius: 8px;
-
-  background: #f5f6f8;
-
-  color: #8e6d3d;
-
-  font-size: 11px;
-  font-weight: 700;
+  color: #8a9098;
+  font-size: 10px;
 }
-
-
-/* Metal price */
 
 .metal-price {
-  margin-top: 31px;
+  margin-top: 21px;
 
-  color: #202733;
-
-  font-size: 27px;
-
-  line-height: 1.1;
+  font-size: 28px;
+  line-height: 1;
 
   font-weight: 700;
-
-  letter-spacing: -0.5px;
-
-  font-variant-numeric:
-    tabular-nums;
+  letter-spacing: -0.7px;
 }
 
 .metal-unit {
-  margin-top: 7px;
+  margin-top: 6px;
 
-  color: #9299a3;
-
+  color: #8e949c;
   font-size: 11px;
 }
 
+.gold-trading-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 
-/* Bottom */
+  margin-top: 12px;
+
+  color: #6d737b;
+  font-size: 11px;
+}
+
+.trading-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #aeb4bb;
+}
+
+.trading-dot.active {
+  background: #3b9e69;
+}
 
 .metal-card-bottom {
-  margin-top: 24px;
+  position: absolute;
 
-  padding-top: 12px;
+  left: 19px;
+  right: 19px;
+  bottom: 13px;
 
-  display: flex;
-  justify-content: space-between;
+  padding-top: 9px;
 
-  border-top: 1px solid #edf0f3;
+  border-top: 1px solid #f0f1f3;
 
-  color: #a0a7b0;
-
+  color: #a2a7ae;
   font-size: 9px;
-}
-
-.metal-card-bottom span:first-child {
-  color: #8e6d3d;
-
-  font-weight: 700;
-}
-
-
-/* Gold */
-
-.metal-gold {
-  border-top: 3px solid #b28a4b;
-}
-
-/* Silver */
-
-.metal-silver {
-  border-top: 3px solid #9ca3ad;
-}
-
-/* Platinum */
-
-.metal-platinum {
-  border-top: 3px solid #7d8794;
-}
-
-/* Palladium */
-
-.metal-palladium {
-  border-top: 3px solid #606b78;
 }
 
 
 /* =====================================================
-   Common Section
+   Section
 ===================================================== */
 
 .section-block {
-  margin-top: 24px;
-
-  background: #ffffff;
-
-  border: 1px solid #e6e9ed;
-
-  border-radius: 13px;
-
-  overflow: hidden;
-
-  box-shadow:
-    0 7px 24px rgba(
-      30,
-      38,
-      50,
-      0.035
-    );
+  margin-bottom: 28px;
 }
 
 .section-heading {
-  padding: 19px 22px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  border-bottom: 1px solid #edf0f3;
+  margin-bottom: 13px;
 }
 
 .section-title {
-  color: #343b46;
-
-  font-size: 15px;
+  font-size: 19px;
   font-weight: 700;
 }
 
 .section-subtitle {
-  margin-top: 3px;
+  margin-top: 4px;
 
-  color: #a3a9b1;
-
-  font-size: 8px;
-  font-weight: 600;
-
-  letter-spacing: 1.5px;
+  font-size: 12px;
+  color: #969ca4;
 }
 
 .section-note {
-  padding: 5px 9px;
+  margin-top: 10px;
 
-  border-radius: 5px;
-
-  background: #f5f6f8;
-
-  color: #858d97;
-
-  font-size: 10px;
+  font-size: 11px;
+  color: #9a9fa6;
 }
 
 
 /* =====================================================
-   Normal Buyback
+   普通回购
 ===================================================== */
 
 .buyback-grid {
   display: grid;
 
   grid-template-columns:
-    repeat(4, 1fr);
+    repeat(4, minmax(0, 1fr));
+
+  gap: 10px;
 }
 
 .buyback-item {
-  min-height: 135px;
+  background: #ffffff;
 
-  padding: 22px;
+  border: 1px solid #e7e9ed;
+  border-radius: 9px;
 
-  border-right: 1px solid #edf0f3;
-}
-
-.buyback-item:last-child {
-  border-right: none;
+  padding: 16px 17px;
 }
 
 .buyback-name {
-  color: #727b86;
-
-  font-size: 12px;
+  font-size: 13px;
+  color: #737981;
 }
 
 .buyback-price {
-  margin-top: 13px;
+  margin-top: 7px;
 
-  color: #303843;
+  font-size: 22px;
+  line-height: 1.1;
 
-  font-size: 23px;
   font-weight: 700;
-
-  font-variant-numeric:
-    tabular-nums;
 }
 
 .buyback-price span {
-  margin-left: 4px;
-
-  color: #969da6;
+  margin-left: 5px;
 
   font-size: 10px;
-
   font-weight: 400;
+
+  color: #979ca4;
 }
 
 .buyback-formula {
-  margin-top: 7px;
+  margin-top: 8px;
 
-  color: #a6acb4;
-
-  font-size: 9px;
+  font-size: 10px;
+  color: #a1a6ad;
 }
 
 
 /* =====================================================
-   Old Material
+   旧料回购
 ===================================================== */
 
 .old-material-section {
-  margin-top: 24px;
-
-  padding: 0;
-
-  background: #ffffff;
-
-  border: 1px solid #e2e5e9;
-
-  border-radius: 14px;
-
-  overflow: hidden;
-
-  box-shadow:
-    0 8px 26px rgba(
-      30,
-      38,
-      50,
-      0.045
-    );
-}
-
-
-/* Header */
-
-.old-material-header {
-  padding: 21px 23px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  background:
-    linear-gradient(
-      90deg,
-      #fbfaf7 0%,
-      #ffffff 100%
-    );
-
-  border-bottom: 1px solid #eceef1;
-}
-
-.old-material-title {
-  color: #303741;
-
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.old-material-subtitle {
   margin-top: 4px;
-
-  color: #a19a8e;
-
-  font-size: 8px;
-  font-weight: 600;
-
-  letter-spacing: 1.6px;
 }
 
-.old-material-badge {
-  padding: 6px 10px;
-
-  border: 1px solid #e7dfd1;
-
-  border-radius: 6px;
-
-  background: #faf8f4;
-
-  color: #947548;
-
-  font-size: 10px;
+.old-group {
+  margin-top: 18px;
 }
 
-
-/* Old material cards */
-
-.old-material-grid {
-  display: grid;
-
-  grid-template-columns:
-    repeat(4, 1fr);
-}
-
-.old-material-card {
-  min-height: 155px;
-
-  padding: 22px;
-
-  border-right: 1px solid #edf0f3;
-}
-
-.old-material-card:last-child {
-  border-right: none;
-}
-
-.old-material-top {
-  display: flex;
-
-  align-items: center;
-  justify-content: space-between;
-}
-
-.old-material-name {
-  color: #545d68;
-
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.old-material-symbol {
-  color: #a3875a;
-
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.old-material-price {
-  margin-top: 17px;
-
-  color: #272f39;
-
-  font-size: 24px;
-  font-weight: 700;
-
-  font-variant-numeric:
-    tabular-nums;
-}
-
-.old-material-price span {
-  margin-left: 4px;
-
-  color: #9ca2aa;
-
-  font-size: 10px;
-
-  font-weight: 400;
-}
-
-.old-material-rule {
-  margin-top: 7px;
-
-  color: #aaa;
-  font-size: 9px;
-}
-
-
-/* Notice */
-
-.old-material-notice {
-  margin: 0 22px 21px;
-
-  padding: 13px 15px;
-
-  display: flex;
-
-  align-items: flex-start;
-
-  gap: 10px;
-
-  border-radius: 8px;
-
-  background: #faf9f6;
-
-  border: 1px solid #eee9df;
-}
-
-.old-notice-icon {
-  flex: 0 0 auto;
-
-  width: 22px;
-  height: 22px;
-
+.old-group-title {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 9px;
 
-  border-radius: 50%;
-
-  background: #eee7da;
-
-  color: #947548;
-
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.old-notice-title {
-  color: #6d604d;
-
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.old-notice-text {
-  margin-top: 4px;
-
-  color: #9d9589;
-
-  font-size: 10px;
-
-  line-height: 1.7;
-}
-
-
-/* =====================================================
-   Market Info
-===================================================== */
-
-.market-info {
-  margin-top: 24px;
-
-  background: #ffffff;
-
-  border: 1px solid #e6e9ed;
-
-  border-radius: 13px;
-
-  overflow: hidden;
-
-  box-shadow:
-    0 7px 24px rgba(
-      30,
-      38,
-      50,
-      0.03
-    );
-}
-
-.market-title {
-  padding: 18px 22px;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 12px;
-
-  border-bottom: 1px solid #edf0f3;
-
-  color: #343b46;
+  margin-bottom: 9px;
 
   font-size: 14px;
   font-weight: 700;
 }
 
-.market-title-en {
-  color: #a5abb3;
+.old-group-title small {
+  font-size: 10px;
+  font-weight: 500;
 
-  font-size: 8px;
-
-  letter-spacing: 1.5px;
+  color: #9a9fa6;
 }
 
-.market-grid {
+.old-material-grid {
   display: grid;
 
   grid-template-columns:
-    repeat(3, 1fr);
+    repeat(4, minmax(0, 1fr));
+
+  gap: 9px;
 }
 
-.market-item {
-  min-height: 125px;
+.old-material-card {
+  background: #ffffff;
 
-  padding: 22px;
+  border: 1px solid #e7e9ed;
+  border-radius: 8px;
 
-  border-right: 1px solid #edf0f3;
+  padding: 13px 14px;
 }
 
-.market-item:last-child {
-  border-right: none;
+.old-material-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
 }
 
-.market-item-label {
-  color: #858d97;
-
-  font-size: 12px;
+.old-material-name {
+  font-size: 13px;
+  font-weight: 600;
 }
 
-.market-item-value {
-  margin-top: 13px;
+.old-material-symbol {
+  font-size: 9px;
+  color: #a0a5ad;
+}
 
-  color: #303843;
+.old-material-price {
+  margin-top: 9px;
 
-  font-size: 22px;
+  font-size: 19px;
   font-weight: 700;
 }
 
-.market-item-desc {
-  margin-top: 7px;
+.old-material-price span {
+  margin-left: 4px;
 
-  color: #aab0b8;
+  font-size: 9px;
+  font-weight: 400;
 
-  font-size: 8px;
+  color: #979ca4;
+}
 
-  letter-spacing: 1.3px;
+.old-material-rule {
+  margin-top: 5px;
+
+  font-size: 9px;
+  color: #a2a7ae;
 }
 
 
 /* =====================================================
-   Update
+   更新时间
 ===================================================== */
 
 .update-panel {
-  margin-top: 18px;
-
-  padding: 17px 21px;
-
   display: flex;
-
   align-items: center;
   justify-content: space-between;
 
-  background: #fafbfc;
+  gap: 20px;
 
-  border: 1px solid #e6e9ed;
+  padding: 15px 17px;
 
-  border-radius: 11px;
+  margin-bottom: 13px;
+
+  background: #ffffff;
+
+  border: 1px solid #e7e9ed;
+  border-radius: 9px;
 }
 
 .update-left {
   display: flex;
-
   align-items: center;
 
   gap: 11px;
 }
 
 .update-icon {
-  width: 33px;
-  height: 33px;
+  width: 32px;
+  height: 32px;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
-  border-radius: 50%;
+  border-radius: 7px;
 
-  background: #ffffff;
+  background: #f1f2f4;
 
-  border: 1px solid #e2e5e9;
+  color: #727981;
 
-  color: #947548;
-
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .update-title {
-  color: #4a525d;
-
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .update-desc {
-  margin-top: 3px;
-
-  color: #9ba2ab;
+  margin-top: 2px;
 
   font-size: 10px;
+  color: #969ca4;
 }
 
 .update-time {
-  text-align: right;
-}
-
-.update-time-label {
-  color: #a2a8b0;
+  margin-top: 3px;
 
   font-size: 9px;
-}
-
-.update-time-value {
-  margin-top: 3px;
-
-  color: #5a626d;
-
-  font-size: 12px;
-  font-weight: 600;
-
-  font-variant-numeric:
-    tabular-nums;
-}
-
-
-/* =====================================================
-   Error
-===================================================== */
-
-.error-panel {
-  margin-top: 14px;
-
-  padding: 15px 17px;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 12px;
-
-  background: #fffafa;
-
-  border: 1px solid #f0dddd;
-
-  border-radius: 11px;
-}
-
-.error-icon {
-  flex: 0 0 auto;
-
-  width: 29px;
-  height: 29px;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: #f6e8e8;
-
-  color: #bd6262;
-
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.error-content {
-  flex: 1;
-}
-
-.error-title {
-  color: #7d5050;
-
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.error-text {
-  margin-top: 3px;
-
-  color: #a27c7c;
-
-  font-size: 10px;
-
-  line-height: 1.6;
+  color: #a5aab1;
 }
 
 .retry-button {
-  padding: 8px 14px;
+  flex-shrink: 0;
 
-  border: 1px solid #dddfe3;
-
-  border-radius: 7px;
+  padding: 8px 13px;
 
   background: #ffffff;
 
-  color: #5e6670;
+  border: 1px solid #dfe2e6;
+  border-radius: 6px;
 
+  color: #555b63;
   font-size: 11px;
-
-  cursor: pointer;
-
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease;
 }
 
 .retry-button:hover {
-  background: #f4f5f7;
+  background: #f6f7f8;
+}
 
-  border-color: #cdd1d6;
+.retry-button:disabled {
+  opacity: 0.55;
+  cursor: default;
 }
 
 
 /* =====================================================
-   Company
+   错误提示
+===================================================== */
+
+.error-panel {
+  margin-bottom: 13px;
+
+  padding: 11px 14px;
+
+  background: #fffaf0;
+
+  border: 1px solid #eee1bd;
+  border-radius: 8px;
+
+  color: #81744f;
+
+  font-size: 11px;
+}
+
+
+/* =====================================================
+   公司信息
 ===================================================== */
 
 .company-card {
-  margin-top: 24px;
-
-  padding: 21px 23px;
-
   display: flex;
-
   align-items: center;
   justify-content: space-between;
 
-  background: #202733;
+  gap: 20px;
 
-  border-radius: 13px;
+  padding: 19px 20px;
 
-  box-shadow:
-    0 10px 28px rgba(
-      30,
-      38,
-      50,
-      0.1
-    );
+  background: #24282e;
+
+  border-radius: 10px;
+
+  color: #ffffff;
 }
 
 .company-main {
   display: flex;
-
   align-items: center;
 
   gap: 12px;
@@ -1045,113 +675,87 @@ a {
   height: 39px;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
+  border: 1px solid #555a61;
   border-radius: 8px;
 
-  background: rgba(
-    255,
-    255,
-    255,
-    0.08
-  );
-
-  color: #d9b778;
-
-  font-size: 11px;
+  font-size: 17px;
   font-weight: 700;
+}
 
-  letter-spacing: 1px;
+.company-label {
+  font-size: 9px;
+  color: #9fa4ab;
 }
 
 .company-name {
-  color: #ffffff;
+  margin-top: 2px;
 
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 700;
 }
 
 .company-desc {
-  margin-top: 4px;
-
-  color: #aeb5be;
+  margin-top: 3px;
 
   font-size: 10px;
+  color: #aeb3b9;
 }
 
 .phone-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 125px;
+
   padding: 9px 14px;
 
-  display: flex;
+  border: 1px solid #535960;
+  border-radius: 6px;
 
-  align-items: center;
-
-  gap: 7px;
-
-  border: 1px solid rgba(
-    255,
-    255,
-    255,
-    0.12
-  );
-
-  border-radius: 7px;
-
-  color: #e4e7eb;
+  color: #ffffff;
+  text-decoration: none;
 
   font-size: 12px;
-  font-weight: 600;
-
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease;
 }
 
 .phone-button:hover {
-  background: rgba(
-    255,
-    255,
-    255,
-    0.07
-  );
-
-  border-color: rgba(
-    255,
-    255,
-    255,
-    0.2
-  );
+  background: #30353b;
 }
 
 
 /* =====================================================
-   Notice
+   价格说明
 ===================================================== */
 
 .notice {
   margin-top: 14px;
 
-  display: flex;
+  padding: 13px 15px;
 
-  align-items: flex-start;
+  background: #ffffff;
 
-  gap: 7px;
+  border: 1px solid #e7e9ed;
+  border-radius: 8px;
+}
 
-  color: #9aa1aa;
+.notice-title {
+  font-size: 11px;
+  font-weight: 700;
+
+  color: #737981;
+}
+
+.notice-text {
+  margin-top: 5px;
 
   font-size: 10px;
-
   line-height: 1.7;
-}
 
-.notice > span {
-  color: #a5abb3;
-}
-
-.notice p {
-  margin: 0;
+  color: #999fa6;
 }
 
 
@@ -1160,491 +764,305 @@ a {
 ===================================================== */
 
 .footer {
-  padding: 24px 20px 34px;
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+
+  padding: 17px 0 25px;
 
   display: flex;
+  justify-content: space-between;
 
-  align-items: center;
-  justify-content: center;
+  gap: 15px;
 
-  gap: 14px;
+  border-top: 1px solid #e2e4e7;
 
-  border-top: 1px solid #e6e9ed;
-
-  color: #a3a9b2;
+  color: #a1a6ad;
 
   font-size: 9px;
 }
 
 
 /* =====================================================
-   Tablet
+   平板
 ===================================================== */
 
 @media (max-width: 900px) {
 
   .metal-grid {
     grid-template-columns:
-      repeat(2, 1fr);
+      repeat(2, minmax(0, 1fr));
   }
 
   .buyback-grid {
     grid-template-columns:
-      repeat(2, 1fr);
-  }
-
-  .buyback-item:nth-child(2) {
-    border-right: none;
-  }
-
-  .buyback-item:nth-child(-n + 2) {
-    border-bottom: 1px solid #edf0f3;
+      repeat(2, minmax(0, 1fr));
   }
 
   .old-material-grid {
     grid-template-columns:
-      repeat(2, 1fr);
-  }
-
-  .old-material-card:nth-child(2) {
-    border-right: none;
-  }
-
-  .old-material-card:nth-child(-n + 2) {
-    border-bottom: 1px solid #edf0f3;
+      repeat(3, minmax(0, 1fr));
   }
 }
 
 
-
-
 /* =====================================================
-   Mobile
+   手机
 ===================================================== */
 
 @media (max-width: 600px) {
 
-  /* =========================
-     Header
-  ========================= */
+  .header-inner,
+  .main,
+  .footer {
+    width: calc(100% - 24px);
+  }
 
   .header-inner {
-    width: calc(100% - 24px);
-    height: 62px;
+    min-height: 62px;
   }
 
   .brand {
-    gap: 10px;
+    gap: 9px;
   }
 
   .brand-logo {
-    width: 35px;
-    height: 35px;
-    border-radius: 8px;
-    font-size: 11px;
+    width: 36px;
+    height: 36px;
+
+    border-radius: 7px;
+
+    font-size: 17px;
   }
 
   .brand-name {
-    font-size: 15px;
-    letter-spacing: 0.5px;
+    font-size: 17px;
   }
 
   .brand-subtitle {
-    display: none;
+    font-size: 10px;
   }
 
   .header-status {
-    font-size: 9px;
-    gap: 6px;
-  }
-
-  .status-dot {
-    width: 6px;
-    height: 6px;
-  }
-
-
-  /* =========================
-     Main
-  ========================= */
-
-  .main {
-    width: calc(100% - 20px);
-
-    padding:
-      25px
-      0
-      35px;
-  }
-
-
-  /* =========================
-     Hero
-  ========================= */
-
-  .hero {
-    margin-bottom: 20px;
-  }
-
-  .hero-label {
-    margin-bottom: 7px;
-
-    font-size: 7px;
-    letter-spacing: 2px;
-  }
-
-  .hero h1 {
-    font-size: 25px;
-    line-height: 1.25;
-    letter-spacing: 0.5px;
-  }
-
-  .hero p {
-    margin-top: 7px;
     font-size: 10px;
   }
 
 
-  /* =========================
-     Four Metals
-  ========================= */
+  .main {
+    padding-top: 20px;
+    padding-bottom: 32px;
+  }
+
+
+  .hero {
+    align-items: center;
+
+    margin-bottom: 16px;
+
+    gap: 12px;
+  }
+
+  .hero-label {
+    margin-bottom: 4px;
+
+    font-size: 9px;
+    letter-spacing: 1.2px;
+  }
+
+  .hero-title {
+    font-size: 23px;
+  }
+
+  .hero-subtitle {
+    margin-top: 4px;
+
+    font-size: 10px;
+  }
+
+  .hero-refresh {
+    padding: 7px 10px;
+
+    font-size: 10px;
+  }
+
 
   .metal-grid {
-    grid-template-columns: 1fr;
-    gap: 9px;
+    gap: 8px;
+
+    margin-bottom: 22px;
   }
 
   .metal-card {
-    min-height: 0;
+    min-height: 164px;
 
-    padding:
-      16px
-      17px;
+    padding: 14px 13px 13px;
 
-    border-radius: 11px;
-  }
-
-  .metal-card-top {
-    align-items: center;
-  }
-
-  .metal-name {
-    font-size: 14px;
+    border-radius: 8px;
   }
 
   .metal-en {
-    margin-top: 2px;
-    font-size: 7px;
-    letter-spacing: 1px;
+    font-size: 8px;
+  }
+
+  .metal-name {
+    margin-top: 3px;
+
+    font-size: 14px;
   }
 
   .metal-symbol {
-    width: 29px;
-    height: 29px;
+    padding: 3px 5px;
 
-    border-radius: 7px;
-
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .metal-price {
-    margin-top: 18px;
+    margin-top: 17px;
 
-    font-size: 27px;
-    line-height: 1.05;
+    font-size: 23px;
   }
 
   .metal-unit {
     margin-top: 5px;
+
+    font-size: 9px;
+  }
+
+  .gold-trading-mini {
+    margin-top: 9px;
+
     font-size: 9px;
   }
 
   .metal-card-bottom {
-    margin-top: 13px;
+    left: 13px;
+    right: 13px;
+    bottom: 10px;
 
-    padding-top: 9px;
+    padding-top: 7px;
 
-    font-size: 8px;
+    font-size: 7px;
   }
 
 
-  /* =========================
-     Common Section
-  ========================= */
-
   .section-block {
-    margin-top: 16px;
-    border-radius: 11px;
+    margin-bottom: 22px;
   }
 
   .section-heading {
-    padding:
-      13px
-      15px;
+    margin-bottom: 10px;
   }
 
   .section-title {
-    font-size: 13px;
+    font-size: 17px;
   }
 
   .section-subtitle {
-    margin-top: 2px;
-    font-size: 7px;
-    letter-spacing: 1.2px;
+    margin-top: 3px;
+
+    font-size: 9px;
   }
 
-  .section-note {
-    padding:
-      4px
-      7px;
-
-    font-size: 8px;
-  }
-
-
-  /* =========================
-     Normal Buyback
-  ========================= */
 
   .buyback-grid {
-    grid-template-columns: 1fr;
+    gap: 7px;
   }
 
   .buyback-item {
-    min-height: 0;
+    padding: 12px 12px;
 
-    padding:
-      13px
-      15px;
-
-    border-right: none;
-
-    border-bottom: 1px solid #edf0f3;
-  }
-
-  .buyback-item:last-child {
-    border-bottom: none;
+    border-radius: 7px;
   }
 
   .buyback-name {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .buyback-price {
-    margin-top: 7px;
+    margin-top: 6px;
 
-    font-size: 20px;
+    font-size: 17px;
   }
 
   .buyback-price span {
     margin-left: 3px;
+
     font-size: 8px;
   }
 
   .buyback-formula {
-    margin-top: 4px;
-    font-size: 8px;
-  }
-
-
-  /* =========================
-     Old Material
-  ========================= */
-
-  .old-material-section {
-    margin-top: 16px;
-    border-radius: 11px;
-  }
-
-  .old-material-header {
-    padding:
-      14px
-      15px;
-  }
-
-  .old-material-title {
-    font-size: 14px;
-  }
-
-  .old-material-subtitle {
-    margin-top: 2px;
-
-    font-size: 7px;
-    letter-spacing: 1.2px;
-  }
-
-  .old-material-badge {
-    padding:
-      5px
-      7px;
-
-    border-radius: 5px;
+    margin-top: 6px;
 
     font-size: 8px;
   }
 
 
-  /* Old material cards */
+  .old-group {
+    margin-top: 14px;
+  }
+
+  .old-group-title {
+    margin-bottom: 7px;
+
+    font-size: 12px;
+  }
+
+  .old-group-title small {
+    font-size: 8px;
+  }
 
   .old-material-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 7px;
   }
 
   .old-material-card {
-    min-height: 0;
+    padding: 11px 11px;
 
-    padding:
-      13px
-      15px;
-
-    border-right: none;
-
-    border-bottom: 1px solid #edf0f3;
-  }
-
-  .old-material-card:last-child {
-    border-bottom: none;
-  }
-
-  .old-material-top {
-    align-items: center;
+    border-radius: 7px;
   }
 
   .old-material-name {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .old-material-symbol {
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .old-material-price {
     margin-top: 7px;
 
-    font-size: 20px;
+    font-size: 16px;
   }
 
   .old-material-price span {
-    margin-left: 3px;
-    font-size: 8px;
+    margin-left: 2px;
+
+    font-size: 7px;
   }
 
   .old-material-rule {
     margin-top: 4px;
-    font-size: 8px;
+
+    font-size: 7px;
   }
 
-
-  /* Old material notice */
-
-  .old-material-notice {
-    margin:
-      10px
-      10px
-      12px;
-
-    padding:
-      9px
-      10px;
-
-    gap: 7px;
-
-    border-radius: 7px;
-  }
-
-  .old-notice-icon {
-    width: 19px;
-    height: 19px;
-
-    font-size: 9px;
-  }
-
-  .old-notice-title {
-    font-size: 9px;
-  }
-
-  .old-notice-text {
-    margin-top: 3px;
+  .section-note {
+    margin-top: 8px;
 
     font-size: 8px;
-    line-height: 1.55;
+    line-height: 1.5;
   }
 
-
-  /* =========================
-     Market Info
-  ========================= */
-
-  .market-info {
-    margin-top: 16px;
-    border-radius: 11px;
-  }
-
-  .market-title {
-    padding:
-      13px
-      15px;
-
-    gap: 8px;
-
-    font-size: 12px;
-  }
-
-  .market-title-en {
-    font-size: 7px;
-    letter-spacing: 1px;
-  }
-
-  .market-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .market-item {
-    min-height: 0;
-
-    padding:
-      12px
-      15px;
-
-    border-right: none;
-
-    border-bottom: 1px solid #edf0f3;
-  }
-
-  .market-item:last-child {
-    border-bottom: none;
-  }
-
-  .market-item-label {
-    font-size: 10px;
-  }
-
-  .market-item-value {
-    margin-top: 5px;
-    font-size: 19px;
-  }
-
-  .market-item-desc {
-    margin-top: 3px;
-    font-size: 7px;
-    letter-spacing: 1px;
-  }
-
-
-  /* =========================
-     Update
-  ========================= */
 
   .update-panel {
-    margin-top: 12px;
+    padding: 12px;
 
-    padding:
-      12px
-      14px;
+    gap: 10px;
 
-    display: block;
-
-    border-radius: 9px;
+    border-radius: 8px;
   }
 
   .update-left {
@@ -1652,101 +1070,37 @@ a {
   }
 
   .update-icon {
-    width: 28px;
-    height: 28px;
+    width: 27px;
+    height: 27px;
 
-    font-size: 13px;
+    font-size: 15px;
   }
 
   .update-title {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .update-desc {
-    margin-top: 2px;
     font-size: 8px;
   }
 
   .update-time {
-    margin-top: 8px;
-
-    padding-top: 8px;
-
-    text-align: left;
-
-    border-top: 1px solid #e8ebee;
-  }
-
-  .update-time-label {
-    font-size: 8px;
-  }
-
-  .update-time-value {
-    margin-top: 2px;
-    font-size: 10px;
-  }
-
-
-  /* =========================
-     Error
-  ========================= */
-
-  .error-panel {
-    margin-top: 10px;
-
-    padding:
-      11px
-      13px;
-
-    align-items: flex-start;
-
-    flex-wrap: wrap;
-
-    gap: 8px;
-
-    border-radius: 9px;
-  }
-
-  .error-icon {
-    width: 25px;
-    height: 25px;
-
-    font-size: 10px;
-  }
-
-  .error-title {
-    font-size: 10px;
-  }
-
-  .error-text {
-    margin-top: 2px;
-    font-size: 8px;
+    font-size: 7px;
   }
 
   .retry-button {
-    margin-left: 33px;
-
-    padding:
-      6px
-      10px;
+    padding: 7px 9px;
 
     font-size: 9px;
   }
 
 
-  /* =========================
-     Company
-  ========================= */
-
   .company-card {
-    margin-top: 16px;
+    padding: 14px;
 
-    padding:
-      15px;
+    gap: 10px;
 
-    align-items: center;
-
-    border-radius: 10px;
+    border-radius: 8px;
   }
 
   .company-main {
@@ -1757,215 +1111,88 @@ a {
     width: 32px;
     height: 32px;
 
-    border-radius: 7px;
+    border-radius: 6px;
+
+    font-size: 14px;
+  }
+
+  .company-label {
+    font-size: 7px;
+  }
+
+  .company-name {
+    font-size: 15px;
+  }
+
+  .company-desc {
+    font-size: 8px;
+  }
+
+  .phone-button {
+    min-width: auto;
+
+    padding: 7px 9px;
 
     font-size: 9px;
   }
 
-  .company-name {
-    font-size: 13px;
-  }
-
-  .company-desc {
-    max-width: 180px;
-
-    margin-top: 3px;
-
-    font-size: 8px;
-    line-height: 1.4;
-  }
-
-  .phone-button {
-    padding:
-      7px
-      9px;
-
-    gap: 5px;
-
-    border-radius: 6px;
-
-    font-size: 8px;
-  }
-
-  .phone-button span {
-    display: none;
-  }
-
-
-  /* =========================
-     Notice
-  ========================= */
 
   .notice {
     margin-top: 10px;
 
-    gap: 5px;
+    padding: 10px 11px;
+  }
+
+  .notice-title {
+    font-size: 9px;
+  }
+
+  .notice-text {
+    margin-top: 4px;
 
     font-size: 8px;
-
-    line-height: 1.55;
+    line-height: 1.6;
   }
 
 
-  /* =========================
-     Footer
-  ========================= */
-
   .footer {
-    padding:
-      18px
-      15px
-      25px;
+    padding-top: 13px;
+    padding-bottom: 20px;
 
-    flex-direction: column;
-
-    gap: 4px;
-
-    font-size: 8px;
-
-    text-align: center;
+    font-size: 7px;
   }
 }
 
 
 /* =====================================================
-   Small Mobile
+   超小屏幕
 ===================================================== */
 
-@media (max-width: 370px) {
+@media (max-width: 380px) {
 
-  .header-inner {
-    height: 59px;
-  }
-
-  .brand-logo {
-    width: 33px;
-    height: 33px;
-  }
-
-  .brand-name {
-    font-size: 14px;
-  }
-
-  .header-status {
-    font-size: 8px;
-  }
-
-
-  .main {
+  .header-inner,
+  .main,
+  .footer {
     width: calc(100% - 18px);
-
-    padding-top: 22px;
-    padding-bottom: 30px;
-  }
-
-
-  .hero {
-    margin-bottom: 17px;
-  }
-
-  .hero h1 {
-    font-size: 23px;
-  }
-
-  .hero p {
-    font-size: 9px;
-  }
-
-
-  .metal-grid {
-    gap: 8px;
   }
 
   .metal-card {
-    padding:
-      14px
-      15px;
-  }
-
-  .metal-name {
-    font-size: 13px;
+    min-height: 158px;
   }
 
   .metal-price {
-    margin-top: 16px;
-    font-size: 25px;
+    font-size: 21px;
   }
 
   .metal-card-bottom {
-    margin-top: 11px;
-    padding-top: 8px;
+    font-size: 6px;
   }
 
-
-  .section-block,
-  .old-material-section,
-  .market-info {
-    margin-top: 14px;
-  }
-
-
-  .section-heading {
-    padding:
-      12px
-      14px;
-  }
-
-
-  .buyback-item {
-    padding:
-      12px
-      14px;
-  }
-
-  .buyback-price {
-    font-size: 19px;
-  }
-
-
-  .old-material-header {
-    padding:
-      13px
-      14px;
-  }
-
-  .old-material-title {
-    font-size: 13px;
-  }
-
-  .old-material-card {
-    padding:
-      12px
-      14px;
-  }
-
-  .old-material-price {
-    font-size: 19px;
-  }
-
-
-  .market-item {
-    padding:
-      11px
-      14px;
-  }
-
-  .market-item-value {
-    font-size: 18px;
-  }
-
-
-  .company-card {
-    flex-direction: column;
-
-    align-items: stretch;
-
-    gap: 10px;
+  .company-desc {
+    display: none;
   }
 
   .phone-button {
-    width: 100%;
-
-    justify-content: center;
+    font-size: 8px;
   }
 }
