@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
 
-  // 浏览器的预检请求
+  // 浏览器预检请求
   if (req.method === 'OPTIONS') {
     return res.status(204).end()
   }
@@ -45,7 +45,16 @@ export default async function handler(req, res) {
     const text = await response.text()
 
     // =====================================================
-    // 尝试解析返回数据
+    // 调试：查看上海黄金交易所实际返回的数据
+    // =====================================================
+
+    console.log('==============================')
+    console.log('SGE RAW RESPONSE:')
+    console.log(text)
+    console.log('==============================')
+
+    // =====================================================
+    // 尝试解析 JSON
     // =====================================================
 
     let data
@@ -53,7 +62,9 @@ export default async function handler(req, res) {
     try {
       data = JSON.parse(text)
     } catch {
-      throw new Error('上海黄金交易所返回的数据不是有效 JSON')
+      throw new Error(
+        '上海黄金交易所返回的数据不是有效 JSON'
+      )
     }
 
     // =====================================================
@@ -72,51 +83,87 @@ export default async function handler(req, res) {
       latestRecord = data.rows[data.rows.length - 1]
     }
 
+    // =====================================================
+    // 如果没找到记录
+    // =====================================================
+
     if (!latestRecord) {
-      throw new Error('没有找到 Au99.99 最新数据')
+      throw new Error(
+        '没有找到 Au99.99 最新数据'
+      )
     }
 
     // =====================================================
-    // 提取数字
+    // 提取最新记录中的字段
     // =====================================================
 
     let values = []
 
     if (Array.isArray(latestRecord)) {
       values = latestRecord
-    } else if (typeof latestRecord === 'object') {
+    } else if (
+      typeof latestRecord === 'object' &&
+      latestRecord !== null
+    ) {
       values = Object.values(latestRecord)
     } else {
       values = [latestRecord]
     }
 
+    // =====================================================
+    // 从字段中提取数字
+    // =====================================================
+
     const numbers = values
       .map((value) => {
+        // 本身就是数字
         if (typeof value === 'number') {
           return value
         }
 
+        // 字符串中提取数字
         if (typeof value === 'string') {
           const match = value.match(
             /-?\d+(?:\.\d+)/
           )
 
-          return match ? Number(match[0]) : NaN
+          return match
+            ? Number(match[0])
+            : NaN
         }
 
         return NaN
       })
       .filter((value) => Number.isFinite(value))
 
+    // =====================================================
+    // 没有找到任何数字
+    // =====================================================
+
     if (numbers.length === 0) {
-      throw new Error('无法从上海黄金交易所数据中提取价格')
+      throw new Error(
+        '无法从上海黄金交易所数据中提取价格'
+      )
     }
 
-    // 使用最新记录中的最后一个有效数字
+    // =====================================================
+    // 暂时使用最新记录中的最后一个有效数字
+    // 后面根据 SGE 实际返回结构进一步确认字段
+    // =====================================================
+
     const price = numbers[numbers.length - 1]
 
-    if (!Number.isFinite(price) || price <= 0) {
-      throw new Error('Au99.99 黄金价格无效')
+    // =====================================================
+    // 检查价格是否有效
+    // =====================================================
+
+    if (
+      !Number.isFinite(price) ||
+      price <= 0
+    ) {
+      throw new Error(
+        'Au99.99 黄金价格无效'
+      )
     }
 
     // =====================================================
@@ -135,7 +182,10 @@ export default async function handler(req, res) {
       )
 
       if (possibleDate) {
-        date = possibleDate.replace(/\//g, '-')
+        date = possibleDate.replace(
+          /\//g,
+          '-'
+        )
       }
     }
 
@@ -153,8 +203,11 @@ export default async function handler(req, res) {
       date,
       updatedAt: new Date().toISOString()
     })
-
   } catch (error) {
+    // =====================================================
+    // 错误处理
+    // =====================================================
+
     console.error(
       'Gold API Error:',
       error
@@ -162,7 +215,9 @@ export default async function handler(req, res) {
 
     return res.status(500).json({
       success: false,
-      error: error.message || '黄金价格获取失败'
+      error:
+        error.message ||
+        '黄金价格获取失败'
     })
   }
 }
