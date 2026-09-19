@@ -5,38 +5,39 @@ import './App.css'
 // API
 // =====================================================
 
+// 上海黄金交易所 Au99.99
+//
+// 本地开发：直接访问已经部署好的 Vercel API
+// 正式网站：使用当前网站自己的 /api/gold
+const GOLD_API_URL = import.meta.env.DEV
+  ? 'https://gold-price-website-nine.vercel.app/api/gold'
+  : '/api/gold'
+
 // Gold API
-// XAU = 黄金
 // XAG = 白银
 // XPT = 铂金
 // XPD = 钯金
 const GOLD_API_BASE = 'https://api.gold-api.com/price'
 
 // 美元人民币汇率
-const EXCHANGE_API_URL = 'https://open.er-api.com/v6/latest/USD'
+const EXCHANGE_API_URL =
+  'https://open.er-api.com/v6/latest/USD'
 
 // =====================================================
 // 基础设置
 // =====================================================
 
-// 自动刷新：60 秒
 const REFRESH_INTERVAL = 60 * 1000
 
-// API 请求最长等待时间：15 秒
 const REQUEST_TIMEOUT = 15 * 1000
 
 // 1 金衡盎司 = 31.1034768 克
 const GRAMS_PER_OUNCE = 31.1034768
 
 // =====================================================
-// 普通回购价模板
+// 普通回购价
 // =====================================================
-//
-// 黄金：实时价格 - 10 元/克
-// 白银：实时价格 - 0.50 元/克
-// 铂金：实时价格 - 20 元/克
-// 钯金：实时价格 - 25 元/克
-//
+
 const NORMAL_BUYBACK_DIFF = {
   gold: 10,
   silver: 0.5,
@@ -45,64 +46,167 @@ const NORMAL_BUYBACK_DIFF = {
 }
 
 // =====================================================
-// 旧料回购模板
+// 旧料回购规则
+// =====================================================
+//
+// 黄金：
+// 金条   = 黄金 - 12
+// 万足金 = 黄金 - 14
+// 千足金 = 黄金 - 16
+// 22K    = 黄金 × 88%
+// 18K    = 黄金 × 73%
+// 14K    = 黄金 × 55%
+// 9K     = 黄金 × 35%
+//
+// 铂金：
+// PT950 = 铂金 - 20
+// PT990 = 铂金 - 15
+// PT999 = 铂金 - 12
+//
+// 钯金：
+// PD950 = 钯金 - 25
+// PD990 = 钯金 - 20
+// PD999 = 钯金 - 18
 // =====================================================
 
-const OLD_MATERIAL_RULES = {
-  gold: {
-    type: 'subtract',
-    value: 15,
-  },
-  silver: {
-    type: 'percent',
-    value: 0.95,
-  },
-  platinum: {
-    type: 'subtract',
-    value: 20,
-  },
-  palladium: {
-    type: 'subtract',
-    value: 25,
-  },
+const OLD_MATERIALS = {
+  gold: [
+    {
+      name: '金条',
+      symbol: 'Au',
+      type: 'subtract',
+      value: 12,
+      ruleText: '参考行情 - 12 元/克',
+    },
+    {
+      name: '万足金',
+      symbol: 'Au',
+      type: 'subtract',
+      value: 14,
+      ruleText: '参考行情 - 14 元/克',
+    },
+    {
+      name: '千足金',
+      symbol: 'Au',
+      type: 'subtract',
+      value: 16,
+      ruleText: '参考行情 - 16 元/克',
+    },
+    {
+      name: '22K',
+      symbol: 'Au',
+      type: 'percent',
+      value: 0.88,
+      ruleText: '参考行情 × 88%',
+    },
+    {
+      name: '18K',
+      symbol: 'Au',
+      type: 'percent',
+      value: 0.73,
+      ruleText: '参考行情 × 73%',
+    },
+    {
+      name: '14K',
+      symbol: 'Au',
+      type: 'percent',
+      value: 0.55,
+      ruleText: '参考行情 × 55%',
+    },
+    {
+      name: '9K',
+      symbol: 'Au',
+      type: 'percent',
+      value: 0.35,
+      ruleText: '参考行情 × 35%',
+    },
+  ],
+
+  platinum: [
+    {
+      name: 'PT950',
+      symbol: 'Pt',
+      type: 'subtract',
+      value: 20,
+      ruleText: '参考行情 - 20 元/克',
+    },
+    {
+      name: 'PT990',
+      symbol: 'Pt',
+      type: 'subtract',
+      value: 15,
+      ruleText: '参考行情 - 15 元/克',
+    },
+    {
+      name: 'PT999',
+      symbol: 'Pt',
+      type: 'subtract',
+      value: 12,
+      ruleText: '参考行情 - 12 元/克',
+    },
+  ],
+
+  palladium: [
+    {
+      name: 'PD950',
+      symbol: 'Pd',
+      type: 'subtract',
+      value: 25,
+      ruleText: '参考行情 - 25 元/克',
+    },
+    {
+      name: 'PD990',
+      symbol: 'Pd',
+      type: 'subtract',
+      value: 20,
+      ruleText: '参考行情 - 20 元/克',
+    },
+    {
+      name: 'PD999',
+      symbol: 'Pd',
+      type: 'subtract',
+      value: 18,
+      ruleText: '参考行情 - 18 元/克',
+    },
+  ],
 }
 
 // =====================================================
-// 金属基本信息
+// 四大贵金属
 // =====================================================
 
 const METALS = [
   {
     key: 'gold',
-    symbol: 'XAU',
+    symbol: 'Au99.99',
     name: '黄金',
     english: 'GOLD',
-    unit: '元 / 克',
     icon: 'Au',
+    source: '上海黄金交易所',
   },
   {
     key: 'silver',
     symbol: 'XAG',
     name: '白银',
     english: 'SILVER',
-    unit: '元 / 克',
     icon: 'Ag',
+    source: 'Gold API',
   },
   {
     key: 'platinum',
     symbol: 'XPT',
     name: '铂金',
     english: 'PLATINUM',
-    unit: '元 / 克',
     icon: 'Pt',
+    source: 'Gold API',
   },
   {
     key: 'palladium',
     symbol: 'XPD',
     name: '钯金',
     english: 'PALLADIUM',
-    unit: '元 / 克',
     icon: 'Pd',
+    source: 'Gold API',
   },
 ]
 
@@ -123,6 +227,12 @@ function App() {
   })
 
   // ===================================================
+  // 黄金 API 信息
+  // ===================================================
+
+  const [goldDate, setGoldDate] = useState(null)
+
+  // ===================================================
   // 汇率
   // ===================================================
 
@@ -134,12 +244,14 @@ function App() {
 
   const [loading, setLoading] = useState(true)
 
+  const [refreshing, setRefreshing] = useState(false)
+
   const [apiError, setApiError] = useState(false)
 
   const [lastUpdated, setLastUpdated] = useState(null)
 
   // ===================================================
-  // 每个金属单独记录错误
+  // 各金属错误状态
   // ===================================================
 
   const [metalErrors, setMetalErrors] = useState({
@@ -150,7 +262,7 @@ function App() {
   })
 
   // ===================================================
-  // 请求超时控制
+  // 请求超时
   // ===================================================
 
   const fetchWithTimeout = async (url) => {
@@ -174,7 +286,41 @@ function App() {
   }
 
   // ===================================================
-  // 获取单个贵金属价格
+  // 获取黄金价格
+  // ===================================================
+
+  const fetchGoldPrice = async () => {
+    const response = await fetchWithTimeout(
+      GOLD_API_URL
+    )
+
+    if (!response.ok) {
+      throw new Error(
+        `黄金 API 请求失败：HTTP ${response.status}`
+      )
+    }
+
+    const data = await response.json()
+
+    const price = Number(data?.price)
+
+    if (
+      !Number.isFinite(price) ||
+      price <= 0
+    ) {
+      throw new Error(
+        '上海黄金交易所黄金价格无效'
+      )
+    }
+
+    return {
+      price,
+      date: data?.date || null,
+    }
+  }
+
+  // ===================================================
+  // 获取国际贵金属价格
   // ===================================================
 
   const fetchMetalPrice = async (symbol) => {
@@ -183,15 +329,22 @@ function App() {
     )
 
     if (!response.ok) {
-      throw new Error(`${symbol} API 请求失败`)
+      throw new Error(
+        `${symbol} API 请求失败`
+      )
     }
 
     const data = await response.json()
 
     const price = Number(data?.price)
 
-    if (!Number.isFinite(price) || price <= 0) {
-      throw new Error(`${symbol} 返回价格无效`)
+    if (
+      !Number.isFinite(price) ||
+      price <= 0
+    ) {
+      throw new Error(
+        `${symbol} API 返回价格无效`
+      )
     }
 
     return price
@@ -207,177 +360,250 @@ function App() {
     )
 
     if (!response.ok) {
-      throw new Error('美元人民币汇率请求失败')
+      throw new Error(
+        `汇率 API 请求失败：HTTP ${response.status}`
+      )
     }
 
     const data = await response.json()
 
-    if (data?.result !== 'success') {
-      throw new Error('美元人民币汇率接口返回失败')
-    }
+    const rate = Number(
+      data?.rates?.CNY
+    )
 
-    const rate = Number(data?.rates?.CNY)
-
-    if (!Number.isFinite(rate) || rate <= 0) {
-      throw new Error('人民币汇率数据无效')
+    if (
+      !Number.isFinite(rate) ||
+      rate <= 0
+    ) {
+      throw new Error(
+        'USD/CNY 汇率无效'
+      )
     }
 
     return rate
   }
 
   // ===================================================
-  // 更新所有价格
+  // USD / 金衡盎司
+  // → CNY / 克
   // ===================================================
 
-  const updatePrices = async () => {
-    setLoading(true)
-
-    let successCount = 0
-
-    // ---------------------------------------------------
-    // 先获取汇率
-    // ---------------------------------------------------
-
-    let usdCny = exchangeRate
-
-    try {
-      usdCny = await fetchExchangeRate()
-
-      setExchangeRate(usdCny)
-    } catch (error) {
-      console.error('汇率获取失败：', error)
-    }
-
-    // ---------------------------------------------------
-    // 如果汇率失败，而且以前没有成功汇率
-    // 就暂时不能计算新的人民币价格
-    // ---------------------------------------------------
-
-    if (!usdCny) {
-      console.error('没有可用的美元人民币汇率')
-
-      setApiError(true)
-      setLoading(false)
-
-      return
-    }
-
-    // ---------------------------------------------------
-    // 美元/盎司 → 人民币/克
-    // ---------------------------------------------------
-
-    const convertToCNYPerGram = (usdPerOunce) => {
-      return (
-        (usdPerOunce / GRAMS_PER_OUNCE) *
-        usdCny
-      )
-    }
-
-    // ---------------------------------------------------
-    // 逐个获取金属
-    //
-    // 不再使用 Promise.all
-    //
-    // 一个失败不会影响另外三个
-    // ---------------------------------------------------
-
-    const results = {}
-
-    for (const metal of METALS) {
-      try {
-        const usdPrice = await fetchMetalPrice(
-          metal.symbol
-        )
-
-        const cnyPrice =
-          convertToCNYPerGram(usdPrice)
-
-        if (
-          Number.isFinite(cnyPrice) &&
-          cnyPrice > 0
-        ) {
-          results[metal.key] = cnyPrice
-          successCount += 1
-        }
-      } catch (error) {
-        console.error(
-          `${metal.name}行情获取失败：`,
-          error
-        )
-
-        results[metal.key] = null
-      }
-    }
-
-    // ---------------------------------------------------
-    // 更新金属错误状态
-    // ---------------------------------------------------
-
-    const newMetalErrors = {}
-
-    METALS.forEach((metal) => {
-      newMetalErrors[metal.key] =
-        results[metal.key] === null
-    })
-
-    setMetalErrors(newMetalErrors)
-
-    // ---------------------------------------------------
-    // 只更新成功获取到的价格
-    //
-    // 失败的金属保留原来的价格
-    // 不会因为一次 API 波动全部变成 --
-    // ---------------------------------------------------
-
-    setMetalPrices((previousPrices) => {
-      const newPrices = {
-        ...previousPrices,
-      }
-
-      METALS.forEach((metal) => {
-        if (
-          results[metal.key] !== null &&
-          results[metal.key] !== undefined
-        ) {
-          newPrices[metal.key] =
-            results[metal.key]
-        }
-      })
-
-      return newPrices
-    })
-
-    // ---------------------------------------------------
-    // 只要至少有一个金属成功，就记录更新时间
-    // ---------------------------------------------------
-
-    if (successCount > 0) {
-      setLastUpdated(new Date())
-    }
-
-    // ---------------------------------------------------
-    // 错误状态
-    // ---------------------------------------------------
-
-    if (successCount === METALS.length) {
-      setApiError(false)
-    } else {
-      setApiError(true)
-    }
-
-    setLoading(false)
+  const usdOunceToCnyGram = (
+    usdPerOunce,
+    usdCny
+  ) => {
+    return (
+      usdPerOunce *
+      usdCny /
+      GRAMS_PER_OUNCE
+    )
   }
 
   // ===================================================
-  // 页面加载 + 自动刷新
+  // 刷新全部价格
+  // ===================================================
+
+  const updatePrices = async () => {
+    if (refreshing) {
+      return
+    }
+
+    setRefreshing(true)
+
+    // -----------------------------------------------
+    // 记录这次请求开始前的旧价格
+    // -----------------------------------------------
+
+    const previousPrices = {
+      ...metalPrices,
+    }
+
+    let successCount = 0
+
+    const newErrors = {
+      gold: false,
+      silver: false,
+      platinum: false,
+      palladium: false,
+    }
+
+    let newExchangeRate =
+      exchangeRate
+
+    try {
+      // =================================================
+      // 黄金
+      // =================================================
+
+      try {
+        const goldResult =
+          await fetchGoldPrice()
+
+        setMetalPrices((previous) => ({
+          ...previous,
+          gold: goldResult.price,
+        }))
+
+        setGoldDate(
+          goldResult.date
+        )
+
+        successCount += 1
+      } catch (error) {
+        console.error(
+          'Gold price error:',
+          error
+        )
+
+        newErrors.gold = true
+      }
+
+      // =================================================
+      // 汇率
+      // =================================================
+
+      try {
+        newExchangeRate =
+          await fetchExchangeRate()
+
+        setExchangeRate(
+          newExchangeRate
+        )
+      } catch (error) {
+        console.error(
+          'Exchange rate error:',
+          error
+        )
+
+        newExchangeRate =
+          exchangeRate
+      }
+
+      // =================================================
+      // 白银 / 铂金 / 钯金
+      // =================================================
+
+      const internationalResults =
+        await Promise.allSettled([
+          fetchMetalPrice('XAG'),
+          fetchMetalPrice('XPT'),
+          fetchMetalPrice('XPD'),
+        ])
+
+      const symbols = [
+        'silver',
+        'platinum',
+        'palladium',
+      ]
+
+      internationalResults.forEach(
+        (result, index) => {
+          const key = symbols[index]
+
+          if (
+            result.status === 'fulfilled' &&
+            Number.isFinite(
+              Number(result.value)
+            ) &&
+            Number(result.value) > 0 &&
+            Number.isFinite(
+              Number(newExchangeRate)
+            )
+          ) {
+            const cnyPerGram =
+              usdOunceToCnyGram(
+                Number(result.value),
+                Number(newExchangeRate)
+              )
+
+            setMetalPrices(
+              (previous) => ({
+                ...previous,
+                [key]: cnyPerGram,
+              })
+            )
+
+            successCount += 1
+          } else {
+            newErrors[key] = true
+          }
+        }
+      )
+
+      // =================================================
+      // 如果某些请求失败
+      // 就继续使用之前成功的价格
+      // =================================================
+
+      setMetalPrices((previous) => {
+        const result = {
+          ...previous,
+        }
+
+        Object.keys(previousPrices)
+          .forEach((key) => {
+            if (
+              result[key] === null &&
+              previousPrices[key] !== null
+            ) {
+              result[key] =
+                previousPrices[key]
+            }
+          })
+
+        return result
+      })
+
+      // =================================================
+      // 错误状态
+      // =================================================
+
+      setMetalErrors(
+        newErrors
+      )
+
+      setApiError(
+        Object.values(newErrors)
+          .some(Boolean)
+      )
+
+      // =================================================
+      // 只要有价格成功获取
+      // 就更新页面更新时间
+      // =================================================
+
+      if (successCount > 0) {
+        setLastUpdated(
+          new Date()
+        )
+      }
+    } catch (error) {
+      console.error(
+        'Update prices error:',
+        error
+      )
+
+      setApiError(true)
+    } finally {
+      setLoading(false)
+      setRefreshing(false)
+    }
+  }
+
+  // ===================================================
+  // 页面加载 + 60 秒自动刷新
   // ===================================================
 
   useEffect(() => {
     updatePrices()
 
-    const timer = setInterval(() => {
-      updatePrices()
-    }, REFRESH_INTERVAL)
+    const timer =
+      setInterval(
+        () => {
+          updatePrices()
+        },
+        REFRESH_INTERVAL
+      )
 
     return () => {
       clearInterval(timer)
@@ -392,7 +618,9 @@ function App() {
     if (
       price === null ||
       price === undefined ||
-      !Number.isFinite(Number(price))
+      !Number.isFinite(
+        Number(price)
+      )
     ) {
       return '--'
     }
@@ -430,8 +658,11 @@ function App() {
   // 普通回购价
   // ===================================================
 
-  const getNormalBuybackPrice = (key) => {
-    const price = metalPrices[key]
+  const getNormalBuybackPrice = (
+    key
+  ) => {
+    const price =
+      metalPrices[key]
 
     if (
       price === null ||
@@ -440,58 +671,168 @@ function App() {
       return null
     }
 
-    const diff = NORMAL_BUYBACK_DIFF[key]
+    const diff =
+      NORMAL_BUYBACK_DIFF[key]
 
-    return Math.max(price - diff, 0)
+    return Math.max(
+      Number(price) - diff,
+      0
+    )
   }
 
   // ===================================================
-  // 旧料回购价
+  // 旧料价格计算
   // ===================================================
 
-  const getOldMaterialPrice = (key) => {
-    const price = metalPrices[key]
-
+  const calculateOldPrice = (
+    marketPrice,
+    rule
+  ) => {
     if (
-      price === null ||
-      price === undefined
+      marketPrice === null ||
+      marketPrice === undefined ||
+      !rule
     ) {
       return null
     }
 
-    const rule = OLD_MATERIAL_RULES[key]
-
     if (rule.type === 'subtract') {
       return Math.max(
-        price - rule.value,
+        Number(marketPrice) -
+          rule.value,
         0
       )
     }
 
     if (rule.type === 'percent') {
-      return price * rule.value
+      return (
+        Number(marketPrice) *
+        rule.value
+      )
     }
 
     return null
   }
 
   // ===================================================
-  // 旧料回购规则文字
+  // 黄金旧料
   // ===================================================
 
-  const getOldMaterialRuleText = (key) => {
-    const rule = OLD_MATERIAL_RULES[key]
+  const goldOldPriceCards =
+    OLD_MATERIALS.gold
 
-    if (rule.type === 'subtract') {
-      return `参考行情 - ${rule.value} 元/克`
+  // ===================================================
+  // 铂金旧料
+  // ===================================================
+
+  const platinumOldPriceCards =
+    OLD_MATERIALS.platinum
+
+  // ===================================================
+  // 钯金旧料
+  // ===================================================
+
+  const palladiumOldPriceCards =
+    OLD_MATERIALS.palladium
+
+  // ===================================================
+  // 黄金交易状态
+  // ===================================================
+  //
+  // 按上海时间判断：
+  //
+  // 周一至周五：
+  // 09:00 - 15:30
+  // 20:00 - 次日 02:30
+  //
+  // 周末：
+  // 非交易时间
+  // ===================================================
+
+  const getGoldTradingStatus = () => {
+    const now =
+      new Date()
+
+    const parts =
+      new Intl.DateTimeFormat(
+        'en-US',
+        {
+          timeZone:
+            'Asia/Shanghai',
+          weekday: 'short',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }
+      ).formatToParts(now)
+
+    const values = {}
+
+    parts.forEach((part) => {
+      if (
+        part.type !== 'literal'
+      ) {
+        values[part.type] =
+          part.value
+      }
+    })
+
+    const weekday =
+      values.weekday
+
+    let hour =
+      Number(values.hour)
+
+    const minute =
+      Number(values.minute)
+
+    if (hour === 24) {
+      hour = 0
     }
 
-    if (rule.type === 'percent') {
-      return `参考行情 × ${rule.value * 100}%`
+    const totalMinutes =
+      hour * 60 + minute
+
+    const weekend =
+      weekday === 'Sat' ||
+      weekday === 'Sun'
+
+    if (weekend) {
+      return {
+        active: false,
+        text: '非交易时间',
+      }
     }
 
-    return '参考价'
+    const daytime =
+      totalMinutes >= 9 * 60 &&
+      totalMinutes <=
+        15 * 60 + 30
+
+    const nighttime =
+      totalMinutes >=
+        20 * 60 ||
+      totalMinutes <=
+        2 * 60 + 30
+
+    if (
+      daytime ||
+      nighttime
+    ) {
+      return {
+        active: true,
+        text: '交易中',
+      }
+    }
+
+    return {
+      active: false,
+      text: '非交易时间',
+    }
   }
+
+  const goldTradingStatus =
+    getGoldTradingStatus()
 
   // ===================================================
   // 页面
@@ -501,16 +842,17 @@ function App() {
     <div className="app">
 
       {/* =================================================
-          顶部
+          Header
       ================================================= */}
 
       <header className="header">
+
         <div className="header-inner">
 
           <div className="brand">
 
             <div className="brand-logo">
-              PT
+              鹏
             </div>
 
             <div>
@@ -520,7 +862,7 @@ function App() {
               </div>
 
               <div className="brand-subtitle">
-                PRECIOUS METALS · RECOVERY &amp; TRADING
+                贵金属回收 · 实时行情
               </div>
 
             </div>
@@ -530,31 +872,32 @@ function App() {
           <div className="header-status">
 
             <span
-              className={`status-dot ${
-                apiError
-                  ? 'status-error'
-                  : 'status-online'
-              }`}
-            ></span>
+              className={
+                goldTradingStatus.active
+                  ? 'status-dot active'
+                  : 'status-dot'
+              }
+            />
 
             <span>
-              {loading
-                ? '正在获取行情'
-                : apiError
-                ? '部分行情异常'
-                : '实时行情'}
+              {goldTradingStatus.active
+                ? '实时行情'
+                : '非交易时间'}
             </span>
 
           </div>
 
         </div>
+
       </header>
 
+
       {/* =================================================
-          主体
+          Main
       ================================================= */}
 
       <main className="main">
+
 
         {/* =================================================
             Hero
@@ -562,22 +905,37 @@ function App() {
 
         <section className="hero">
 
-          <div className="hero-label">
-            PRECIOUS METALS PRICE
+          <div>
+
+            <div className="hero-label">
+              PRECIOUS METAL MARKET
+            </div>
+
+            <h1 className="hero-title">
+              贵金属实时行情
+            </h1>
+
+            <p className="hero-subtitle">
+              国际市场价格换算 · 每60秒自动更新
+            </p>
+
           </div>
 
-          <h1>
-            贵金属实时价格
-          </h1>
-
-          <p>
-            黄金 · 白银 · 铂金 · 钯金
-          </p>
+          <button
+            className="hero-refresh"
+            onClick={updatePrices}
+            disabled={refreshing}
+          >
+            {refreshing
+              ? '更新中...'
+              : '刷新价格'}
+          </button>
 
         </section>
 
+
         {/* =================================================
-            金属价格
+            四大贵金属
         ================================================= */}
 
         <section className="metal-grid">
@@ -587,8 +945,8 @@ function App() {
             const price =
               metalPrices[metal.key]
 
-            const hasError =
-              metalErrors[metal.key]
+            const isGold =
+              metal.key === 'gold'
 
             return (
               <div
@@ -600,41 +958,56 @@ function App() {
 
                   <div>
 
-                    <div className="metal-name">
-                      {metal.name}
-                    </div>
-
                     <div className="metal-en">
                       {metal.english}
+                    </div>
+
+                    <div className="metal-name">
+                      {metal.name}
                     </div>
 
                   </div>
 
                   <div className="metal-symbol">
-                    {metal.icon}
+                    {metal.symbol}
                   </div>
 
                 </div>
+
 
                 <div className="metal-price">
                   ¥{formatPrice(price)}
                 </div>
 
                 <div className="metal-unit">
-                  {metal.unit}
+                  元 / 克
                 </div>
+
+
+                {isGold && (
+                  <div className="gold-trading-mini">
+
+                    <span
+                      className={
+                        goldTradingStatus.active
+                          ? 'trading-dot active'
+                          : 'trading-dot'
+                      }
+                    />
+
+                    <span>
+                      {goldTradingStatus.text}
+                    </span>
+
+                  </div>
+                )}
+
 
                 <div className="metal-card-bottom">
 
-                  <span>
-                    {metal.symbol}
-                  </span>
-
-                  <span>
-                    {hasError
-                      ? '行情获取异常'
-                      : '国际现货参考'}
-                  </span>
+                  {isGold
+                    ? `数据来源：${metal.source} · ${goldDate || '最新数据'}`
+                    : `数据来源：${metal.source}`}
 
                 </div>
 
@@ -643,6 +1016,7 @@ function App() {
           })}
 
         </section>
+
 
         {/* =================================================
             普通回购
@@ -670,6 +1044,7 @@ function App() {
 
           </div>
 
+
           <div className="buyback-grid">
 
             {METALS.map((metal) => {
@@ -694,7 +1069,9 @@ function App() {
 
                   <div className="buyback-price">
 
-                    ¥{formatPrice(buybackPrice)}
+                    ¥{formatPrice(
+                      buybackPrice
+                    )}
 
                     <span>
                       / 克
@@ -718,6 +1095,7 @@ function App() {
           </div>
 
         </section>
+
 
         {/* =================================================
             旧料回购
@@ -745,54 +1123,220 @@ function App() {
 
           </div>
 
-          <div className="old-material-grid">
 
-            {METALS.map((metal) => {
+          {/* ================= 黄金旧料 ================= */}
 
-              const oldPrice =
-                getOldMaterialPrice(
-                  metal.key
-                )
+          <div className="old-group">
 
-              return (
-                <div
-                  className="old-material-card"
-                  key={metal.key}
-                >
+            <div className="old-group-title">
 
-                  <div className="old-material-top">
+              <span>
+                黄金旧料
+              </span>
 
-                    <div className="old-material-name">
-                      {metal.name}旧料
+              <small>
+                Au
+              </small>
+
+            </div>
+
+
+            <div className="old-material-grid">
+
+              {goldOldPriceCards.map(
+                (item) => {
+
+                  const price =
+                    calculateOldPrice(
+                      metalPrices.gold,
+                      item
+                    )
+
+                  return (
+                    <div
+                      className="old-material-card"
+                      key={item.name}
+                    >
+
+                      <div className="old-material-top">
+
+                        <div className="old-material-name">
+                          {item.name}
+                        </div>
+
+                        <div className="old-material-symbol">
+                          {item.symbol}
+                        </div>
+
+                      </div>
+
+                      <div className="old-material-price">
+
+                        ¥{formatPrice(price)}
+
+                        <span>
+                          / 克
+                        </span>
+
+                      </div>
+
+                      <div className="old-material-rule">
+                        {item.ruleText}
+                      </div>
+
                     </div>
+                  )
+                }
+              )}
 
-                    <div className="old-material-symbol">
-                      {metal.icon}
-                    </div>
-
-                  </div>
-
-                  <div className="old-material-price">
-
-                    ¥{formatPrice(oldPrice)}
-
-                    <span>
-                      / 克
-                    </span>
-
-                  </div>
-
-                  <div className="old-material-rule">
-                    {getOldMaterialRuleText(
-                      metal.key
-                    )}
-                  </div>
-
-                </div>
-              )
-            })}
+            </div>
 
           </div>
+
+
+          {/* ================= 铂金旧料 ================= */}
+
+          <div className="old-group">
+
+            <div className="old-group-title">
+
+              <span>
+                铂金旧料
+              </span>
+
+              <small>
+                Pt
+              </small>
+
+            </div>
+
+
+            <div className="old-material-grid">
+
+              {platinumOldPriceCards.map(
+                (item) => {
+
+                  const price =
+                    calculateOldPrice(
+                      metalPrices.platinum,
+                      item
+                    )
+
+                  return (
+                    <div
+                      className="old-material-card"
+                      key={item.name}
+                    >
+
+                      <div className="old-material-top">
+
+                        <div className="old-material-name">
+                          {item.name}
+                        </div>
+
+                        <div className="old-material-symbol">
+                          {item.symbol}
+                        </div>
+
+                      </div>
+
+                      <div className="old-material-price">
+
+                        ¥{formatPrice(price)}
+
+                        <span>
+                          / 克
+                        </span>
+
+                      </div>
+
+                      <div className="old-material-rule">
+                        {item.ruleText}
+                      </div>
+
+                    </div>
+                  )
+                }
+              )}
+
+            </div>
+
+          </div>
+
+
+          {/* ================= 钯金旧料 ================= */}
+
+          <div className="old-group">
+
+            <div className="old-group-title">
+
+              <span>
+                钯金旧料
+              </span>
+
+              <small>
+                Pd
+              </small>
+
+            </div>
+
+
+            <div className="old-material-grid">
+
+              {palladiumOldPriceCards.map(
+                (item) => {
+
+                  const price =
+                    calculateOldPrice(
+                      metalPrices.palladium,
+                      item
+                    )
+
+                  return (
+                    <div
+                      className="old-material-card"
+                      key={item.name}
+                    >
+
+                      <div className="old-material-top">
+
+                        <div className="old-material-name">
+                          {item.name}
+                        </div>
+
+                        <div className="old-material-symbol">
+                          {item.symbol}
+                        </div>
+
+                      </div>
+
+                      <div className="old-material-price">
+
+                        ¥{formatPrice(price)}
+
+                        <span>
+                          / 克
+                        </span>
+
+                      </div>
+
+                      <div className="old-material-rule">
+                        {item.ruleText}
+                      </div>
+
+                    </div>
+                  )
+                }
+              )}
+
+            </div>
+
+          </div>
+
+
+          {/* =================================================
+              旧料说明
+          ================================================= */}
 
           <div className="old-material-notice">
 
@@ -807,9 +1351,7 @@ function App() {
               </div>
 
               <div className="old-notice-text">
-                实际回收价格将根据材质、成色、
-                重量、检测结果、损耗及实时市场行情综合评估，
-                最终价格以现场检测及双方协商为准。
+                实际回收价格将根据材质、成色、重量、检测结果、损耗及实时市场行情综合评估，最终价格以现场检测及双方协商为准。
               </div>
 
             </div>
@@ -817,6 +1359,7 @@ function App() {
           </div>
 
         </section>
+
 
         {/* =================================================
             行情数据
@@ -824,69 +1367,76 @@ function App() {
 
         <section className="market-info">
 
-          <div className="market-title">
+          <div className="market-header">
 
-            <span>
-              行情数据
-            </span>
+            <div>
 
-            <span className="market-title-en">
-              MARKET DATA
-            </span>
+              <div className="market-title">
+                行情数据
+              </div>
+
+              <div className="market-subtitle">
+                MARKET DATA
+              </div>
+
+            </div>
 
           </div>
+
 
           <div className="market-grid">
 
             <div className="market-item">
 
-              <div className="market-item-label">
+              <span>
                 美元人民币
-              </div>
+              </span>
 
-              <div className="market-item-value">
-
-                {exchangeRate !== null
-                  ? formatPrice(exchangeRate)
+              <strong>
+                {exchangeRate
+                  ? Number(
+                      exchangeRate
+                    ).toFixed(4)
                   : '--'}
+              </strong>
 
-              </div>
-
-              <div className="market-item-desc">
+              <small>
                 USD / CNY
-              </div>
+              </small>
 
             </div>
 
+
             <div className="market-item">
 
-              <div className="market-item-label">
+              <span>
                 计价单位
-              </div>
+              </span>
 
-              <div className="market-item-value">
+              <strong>
                 克
-              </div>
+              </strong>
 
-              <div className="market-item-desc">
+              <small>
                 CNY / GRAM
-              </div>
+              </small>
 
             </div>
 
+
             <div className="market-item">
 
-              <div className="market-item-label">
+              <span>
                 更新周期
-              </div>
+              </span>
 
-              <div className="market-item-value">
+              <strong>
                 60秒
-              </div>
+              </strong>
 
-              <div className="market-item-desc">
+              <small>
                 AUTO REFRESH
-              </div>
+              </small>
 
             </div>
 
@@ -894,8 +1444,9 @@ function App() {
 
         </section>
 
+
         {/* =================================================
-            自动更新
+            更新时间
         ================================================= */}
 
         <section className="update-panel">
@@ -913,70 +1464,47 @@ function App() {
               </div>
 
               <div className="update-desc">
-                系统每 60 秒自动获取最新市场数据
+                系统每 60 秒自动获取最新市场行情
+              </div>
+
+              <div className="update-time">
+                最近更新：
+                {formatTime(
+                  lastUpdated
+                )}
               </div>
 
             </div>
 
           </div>
 
-          <div className="update-time">
 
-            <div className="update-time-label">
-              最后成功更新时间
-            </div>
-
-            <div className="update-time-value">
-              {formatTime(lastUpdated)}
-            </div>
-
-          </div>
+          <button
+            className="retry-button"
+            onClick={updatePrices}
+            disabled={refreshing}
+          >
+            {refreshing
+              ? '更新中...'
+              : '立即更新'}
+          </button>
 
         </section>
 
+
         {/* =================================================
-            错误提示
+            API 异常提示
         ================================================= */}
 
         {apiError && (
+          <div className="error-panel">
 
-          <section className="error-panel">
+            当前部分市场数据暂时无法获取。
+            页面继续显示最近一次成功获取的价格。
 
-            <div className="error-icon">
-              !
-            </div>
-
-            <div className="error-content">
-
-              <div className="error-title">
-                行情更新暂时异常
-              </div>
-
-              <div className="error-text">
-
-                当前部分市场数据暂时无法获取。
-
-                {lastUpdated
-                  ? ' 页面继续显示最近一次成功获取的价格。'
-                  : ' 请稍后点击重新获取。'}
-
-              </div>
-
-            </div>
-
-            <button
-              className="retry-button"
-              onClick={updatePrices}
-              disabled={loading}
-            >
-              {loading
-                ? '获取中...'
-                : '重新获取'}
-            </button>
-
-          </section>
-
+          </div>
         )}
+
 
         {/* =================================================
             公司信息
@@ -987,58 +1515,56 @@ function App() {
           <div className="company-main">
 
             <div className="company-mark">
-              PT
+              鹏
             </div>
 
             <div>
+
+              <div className="company-label">
+                回收咨询
+              </div>
 
               <div className="company-name">
                 鹏图商贸
               </div>
 
               <div className="company-desc">
-                黄金回收 · 贵金属回收 · 旧料回购 · 贵金属交易
+                专业贵金属回收 · 价格透明 · 实时行情
               </div>
 
             </div>
 
           </div>
 
+
           <a
-            href="tel:15398755989"
             className="phone-button"
+            href="tel:15398755989"
           >
-
-            <span>
-              ☎
-            </span>
-
-            15398755989
-
+            ☎ 15398755989
           </a>
 
         </section>
 
+
         {/* =================================================
-            底部说明
+            价格说明
         ================================================= */}
 
-        <div className="notice">
+        <section className="notice">
 
-          <span>
-            ⓘ
-          </span>
+          <div className="notice-title">
+            价格说明
+          </div>
 
-          <p>
-            以上贵金属价格根据国际市场行情及汇率换算，
-            仅作为交易参考。实际交易价格可能因市场波动、
-            材质、纯度、重量、成色、检测结果及具体交易情况而调整。
-            旧料回购价格以现场检测及双方协商结果为准。
-          </p>
+          <div className="notice-text">
+            以上价格仅供参考，实际回购价格根据当日市场行情、贵金属成色、重量及检测结果综合确定，具体价格以实物检测及双方协商为准。
+          </div>
 
-        </div>
+        </section>
 
       </main>
+
 
       {/* =================================================
           Footer
@@ -1047,11 +1573,11 @@ function App() {
       <footer className="footer">
 
         <div>
-          鹏图商贸 · 贵金属回收报价
+          © 2026 鹏图商贸
         </div>
 
         <div>
-          实时行情仅供参考 · 价格以实际面议为准
+          贵金属行情仅供参考
         </div>
 
       </footer>
