@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
 
-  // 浏览器预检请求
+  // 浏览器预检
   if (req.method === 'OPTIONS') {
     return res.status(204).end()
   }
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
   try {
     // =====================================================
-    // 上海黄金交易所 Au99.99
+    // 请求上海黄金交易所
     // =====================================================
 
     const response = await fetch(
@@ -30,7 +30,8 @@ export default async function handler(req, res) {
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'User-Agent': 'Mozilla/5.0'
         },
         body: 'instid=Au99.99'
       }
@@ -42,182 +43,40 @@ export default async function handler(req, res) {
       )
     }
 
+    // =====================================================
+    // 获取原始返回内容
+    // =====================================================
+
     const text = await response.text()
 
-    // =====================================================
-    // 调试：查看上海黄金交易所实际返回的数据
-    // =====================================================
-
     console.log('==============================')
+    console.log('SGE STATUS:', response.status)
     console.log('SGE RAW RESPONSE:')
     console.log(text)
     console.log('==============================')
 
     // =====================================================
-    // 尝试解析 JSON
-    // =====================================================
-
-    let data
-
-    try {
-      data = JSON.parse(text)
-    } catch {
-      throw new Error(
-        '上海黄金交易所返回的数据不是有效 JSON'
-      )
-    }
-
-    // =====================================================
-    // 找到最新的一条数据
-    // =====================================================
-
-    let latestRecord = null
-
-    if (Array.isArray(data)) {
-      latestRecord = data[data.length - 1]
-    } else if (Array.isArray(data?.data)) {
-      latestRecord = data.data[data.data.length - 1]
-    } else if (Array.isArray(data?.result)) {
-      latestRecord = data.result[data.result.length - 1]
-    } else if (Array.isArray(data?.rows)) {
-      latestRecord = data.rows[data.rows.length - 1]
-    }
-
-    // =====================================================
-    // 如果没找到记录
-    // =====================================================
-
-    if (!latestRecord) {
-      throw new Error(
-        '没有找到 Au99.99 最新数据'
-      )
-    }
-
-    // =====================================================
-    // 提取最新记录中的字段
-    // =====================================================
-
-    let values = []
-
-    if (Array.isArray(latestRecord)) {
-      values = latestRecord
-    } else if (
-      typeof latestRecord === 'object' &&
-      latestRecord !== null
-    ) {
-      values = Object.values(latestRecord)
-    } else {
-      values = [latestRecord]
-    }
-
-    // =====================================================
-    // 从字段中提取数字
-    // =====================================================
-
-    const numbers = values
-      .map((value) => {
-        // 本身就是数字
-        if (typeof value === 'number') {
-          return value
-        }
-
-        // 字符串中提取数字
-        if (typeof value === 'string') {
-          const match = value.match(
-            /-?\d+(?:\.\d+)/
-          )
-
-          return match
-            ? Number(match[0])
-            : NaN
-        }
-
-        return NaN
-      })
-      .filter((value) => Number.isFinite(value))
-
-    // =====================================================
-    // 没有找到任何数字
-    // =====================================================
-
-    if (numbers.length === 0) {
-      throw new Error(
-        '无法从上海黄金交易所数据中提取价格'
-      )
-    }
-
-    // =====================================================
-    // 暂时使用最新记录中的最后一个有效数字
-    // 后面根据 SGE 实际返回结构进一步确认字段
-    // =====================================================
-
-    const price = numbers[numbers.length - 1]
-
-    // =====================================================
-    // 检查价格是否有效
-    // =====================================================
-
-    if (
-      !Number.isFinite(price) ||
-      price <= 0
-    ) {
-      throw new Error(
-        'Au99.99 黄金价格无效'
-      )
-    }
-
-    // =====================================================
-    // 日期
-    // =====================================================
-
-    let date = new Date()
-      .toISOString()
-      .slice(0, 10)
-
-    if (Array.isArray(latestRecord)) {
-      const possibleDate = latestRecord.find(
-        (value) =>
-          typeof value === 'string' &&
-          /^\d{4}[-/]\d{1,2}[-/]\d{1,2}$/.test(value)
-      )
-
-      if (possibleDate) {
-        date = possibleDate.replace(
-          /\//g,
-          '-'
-        )
-      }
-    }
-
-    // =====================================================
-    // 返回给前端
+    // 临时诊断
+    // 直接把 SGE 原始数据返回给浏览器
     // =====================================================
 
     return res.status(200).json({
-      success: true,
-      source: 'Shanghai Gold Exchange',
-      product: 'Au99.99',
-      currency: 'CNY',
-      unit: 'RMB/gram',
-      price: Number(price),
-      date,
-      updatedAt: new Date().toISOString()
+      success: false,
+      debug: true,
+      message: '已经成功连接上海黄金交易所，下面是原始返回数据',
+      raw: text
     })
+
   } catch (error) {
     // =====================================================
     // 错误处理
     // =====================================================
 
-    console.error(
-      'Gold API Error:',
-      error
-    )
+    console.error('Gold API Error:', error)
 
     return res.status(500).json({
       success: false,
-      error:
-        error.message ||
-        '黄金价格获取失败'
+      error: error.message || '黄金价格获取失败'
     })
   }
 }
